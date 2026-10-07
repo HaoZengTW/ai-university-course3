@@ -2,245 +2,2020 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>LLM Model Lab｜大型語言模型選型實驗室</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>雲地混合選型講義</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 :root{
-  --bg:#EEF2F1; --surface:#FFFFFF; --surface-2:#E3E9E8; --ink:#15252B; --ink-2:#516268; --line:#C6D1D0;
-  --accent:#B96F0E; --accent-bg:#F7E9D3; --blue:#2B67A8; --blue-bg:#E1EBF6; --green:#2C7651; --green-bg:#DFEFE5;
-  --purple:#6A4FA0; --purple-bg:#ECE6F5; --red:#AE3829; --red-bg:#F6E1DD;
+  --bg:#EEF2F1; --surface:#FFFFFF; --surface-2:#E3E9E8;
+  --ink:#15252B; --ink-2:#46575D; --line:#C6D1D0;
+  --cloud:#2B67A8; --cloud-bg:#E1EBF6;
+  --local:#2C7651; --local-bg:#DFEFE5;
+  --hybrid:#6A4FA0; --hybrid-bg:#ECE6F5;
+  --accent:#B96F0E; --accent-bg:#F7E9D3;
+  --warn:#AE3829; --warn-bg:#F6E1DD;
+  --human:#5C6770; --human-bg:#E6EAEC;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans)}
-button,input,select,textarea{font:inherit} button{cursor:pointer} [hidden]{display:none!important}
-body{font-size:24px;line-height:1.45}.shell{max-width:1600px;margin:auto;padding:0 30px 50px}
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:12px}
-.brandrow{display:flex;align-items:center;gap:18px;justify-content:space-between}.brand{font-weight:900;font-size:26px;letter-spacing:.02em}.userbox{display:flex;gap:12px;align-items:center;font-size:24px;color:var(--ink-2)}
-.budget-pill{font-family:var(--mono);font-weight:600;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 10px}.nav{display:flex;gap:6px;overflow-x:auto;padding-top:12px}
-.nav button{border:0;background:none;color:var(--ink-2);font-weight:800;padding:10px 14px;border-bottom:4px solid transparent;white-space:nowrap}.nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-main{padding-top:28px}.panel{display:none}.panel.active{display:block}.head{display:grid;gap:8px;margin-bottom:24px}.eyebrow{font-family:var(--mono);color:var(--accent);font-weight:600;letter-spacing:.05em}.head h1{font-size:clamp(32px,4vw,58px);line-height:1.13;margin:0;max-width:18ch}.lead{font-size:26px;color:var(--ink-2);max-width:70ch;margin:0}.grid{display:grid;gap:18px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
-.card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:22px}.card h2,.card h3{margin:0 0 8px}.card p{margin:0;color:var(--ink-2)}.tag{display:inline-flex;border-radius:999px;padding:3px 10px;font-weight:800;font-size:24px;background:var(--surface-2);margin-bottom:10px}
-.big{font-size:30px;font-weight:900;line-height:1.2}.mono{font-family:var(--mono)}.accent{color:var(--accent)}.blue{color:var(--blue)}.green{color:var(--green)}.purple{color:var(--purple)}
-.scenario-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}.scenario{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:18px}.scenario select{width:100%;margin-top:10px;padding:10px;border:2px solid var(--line);border-radius:10px;background:var(--surface)}
-.result-callout{border-radius:14px;background:var(--ink);color:var(--bg);padding:20px 22px;display:grid;gap:8px}.result-callout b{font-size:26px}.employee{position:relative;overflow:hidden}.employee:before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:var(--surface-2)}.employee .salary{font-family:var(--mono);font-size:24px;color:var(--ink-2);margin-top:12px}.employee ul{padding-left:20px;margin:10px 0 0}
-.triangle-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}.complexity-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.complexity-card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start}.complexity-card .lvl{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--accent)}.complexity-card h3{font-size:28px;margin:0}.complexity-card p{font-size:24px;margin:0;color:var(--ink-2)}.complexity-card .eg{border-top:1px solid var(--line);padding-top:8px;color:var(--ink);font-weight:700}.complexity-card.active{border-color:var(--accent);background:var(--accent-bg)}.complexity-detail{display:grid;grid-template-columns:.75fr 1.25fr;gap:20px}.controlbox{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:18px}.range-row label{display:flex;justify-content:space-between;font-weight:800}.range-row input{width:100%}.level-dots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.level-dots button{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;font-weight:900}.level-dots button.active{border-color:var(--accent);background:var(--accent-bg)}
-.meters{display:grid;gap:14px}.meter{display:grid;grid-template-columns:110px 1fr 72px;gap:12px;align-items:center}.meter .track{height:16px;border-radius:999px;background:var(--surface-2);overflow:hidden}.meter .fill{height:100%;border-radius:999px;transition:width .25s}.fill.q{background:var(--green)}.fill.s{background:var(--blue)}.fill.c{background:var(--accent)}
-.note{font-size:24px;color:var(--ink-2)}.lab-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:22px}.sidebar{display:grid;gap:14px;align-content:start}.box{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:18px}.box h3{margin:0 0 10px}.field{display:grid;gap:6px;margin-bottom:12px}.field label{font-weight:800;font-size:24px}.field select,.field input,.field textarea{width:100%;padding:9px 10px;border:2px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
-.task-list{display:grid;gap:8px}.task-btn{width:100%;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px}.task-btn.active{border-color:var(--accent);background:var(--accent-bg)}.task-btn b{display:block}.task-btn small{color:var(--ink-2);font-size:24px}
-.workspace{display:grid;gap:16px}.task-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.task-head h2{margin:0}.question-nav{display:flex;gap:6px;flex-wrap:wrap}.question-nav button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 10px}.question-nav button.active{background:var(--ink);color:var(--bg)}
-.promptbox{white-space:pre-wrap;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:18px;min-height:170px}.runbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.btn{border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 16px;font-weight:900}.btn.secondary{background:var(--surface);color:var(--ink);border-color:var(--line)}.btn:disabled{opacity:.4;cursor:not-allowed}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px}.stat .k{font-size:24px;color:var(--ink-2);text-transform:uppercase}.stat .v{font-family:var(--mono);font-size:26px;font-weight:600}.answer{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:18px;white-space:pre-wrap;min-height:140px}.answer.loading{color:var(--ink-2)}
-.login-overlay{position:fixed;inset:0;z-index:100;background:rgba(15,24,27,.72);display:grid;place-items:center;padding:24px}.login-card{width:min(520px,100%);background:var(--surface);border-radius:18px;padding:28px;border:2px solid var(--line);box-shadow:0 25px 80px rgba(0,0,0,.3)}.login-card h1{margin:0 0 6px;font-size:34px}.login-card p{color:var(--ink-2)}.login-card input{width:100%;padding:12px;border:2px solid var(--line);border-radius:10px;margin:8px 0 12px}.login-error{color:var(--red);font-weight:700;min-height:1.5em}
-.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:10px;z-index:200;max-width:420px}.quota{display:grid;gap:5px}.quota-track{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}.quota-fill{height:100%;background:var(--accent);width:0}
-@media(max-width:1000px){.g3,.g2,.triangle-wrap,.lab-layout,.scenario-row,.complexity-detail{grid-template-columns:1fr}.complexity-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}.sidebar{grid-template-columns:1fr 1fr}.shell{padding-inline:18px}}
-@media(max-width:650px){body{font-size:24px}.complexity-grid{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.userbox{display:none}.head h1{font-size:36px}}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10181B; --surface:#172226; --surface-2:#1E2B30;
+    --ink:#E4ECEA; --ink-2:#A6B5B8; --line:#2F4046;
+    --cloud:#86B8EC; --cloud-bg:#1A2C40;
+    --local:#78D0A3; --local-bg:#16332A;
+    --hybrid:#B9A3E6; --hybrid-bg:#2A2340;
+    --accent:#EBAA4A; --accent-bg:#3A2B13;
+    --warn:#F08A7B; --warn-bg:#3E201C;
+    --human:#B3BEC5; --human-bg:#26323A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10181B; --surface:#172226; --surface-2:#1E2B30;
+  --ink:#E4ECEA; --ink-2:#A6B5B8; --line:#2F4046;
+  --cloud:#86B8EC; --cloud-bg:#1A2C40;
+  --local:#78D0A3; --local-bg:#16332A;
+  --hybrid:#B9A3E6; --hybrid-bg:#2A2340;
+  --accent:#EBAA4A; --accent-bg:#3A2B13;
+  --warn:#F08A7B; --warn-bg:#3E201C;
+  --human:#B3BEC5; --human-bg:#26323A;
+}
+
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:24px; line-height:1.45;
+  display:grid; grid-template-rows:auto 1fr; grid-template-columns:minmax(0,1fr);
+  padding-inline:clamp(16px,3vw,56px);
+  -webkit-font-smoothing:antialiased;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+h1,h2,h3,p,ul{margin:0}
+
+/* ---------- section bar ---------- */
+header{display:grid; min-width:0}
+main{min-width:0}
+.secbar{display:flex; align-items:flex-end; gap:24px; border-bottom:1px solid var(--line); padding-top:10px}
+.secs{display:flex; gap:8px; overflow-x:auto; min-width:0; flex:1}
+.sec{
+  font:inherit; font-size:28px; font-weight:900; color:var(--ink-2); background:none; border:0; cursor:pointer;
+  padding:6px 18px 10px; border-bottom:4px solid transparent; margin-bottom:-1px; white-space:nowrap;
+  display:flex; align-items:baseline; gap:10px;
+}
+.sec .n{font-family:var(--mono); font-size:24px; font-weight:600; opacity:.6}
+.sec:hover{color:var(--ink)}
+.sec[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent)}
+.sec[aria-selected="true"] .n{color:var(--accent); opacity:1}
+.sec:focus-visible{outline:3px solid var(--accent); outline-offset:-3px}
+.plan{display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:2px solid var(--ink)}
+.plan > div{padding:18px 28px 18px 0; display:grid; gap:8px; align-content:start}
+.plan > div:nth-child(2n){padding-left:28px; padding-right:0; border-left:1px solid var(--line)}
+.plan > div:nth-child(n+3){border-top:1px solid var(--line)}
+.plan h3{font-size:30px; font-weight:900}
+.wip{align-self:flex-start}
+
+/* ---------- tab bar ---------- */
+.bar{
+  display:flex; align-items:center; gap:24px;
+  padding-block:10px; border-bottom:2px solid var(--ink);
+}
+.brand{font-weight:900; flex:none; font-size:24px; white-space:nowrap; letter-spacing:.02em}
+.tabs{display:flex; gap:4px; overflow-x:auto; flex:1; min-width:0; scrollbar-width:thin}
+.tab{
+  font:inherit; font-size:24px; font-weight:500; color:var(--ink-2);
+  background:none; border:0; border-radius:8px;
+  padding:6px 11px; cursor:pointer; white-space:nowrap;
+  display:flex; align-items:baseline; gap:6px;
+}
+.tab .n{font-family:var(--mono); font-size:24px; font-weight:600; opacity:.55}
+.tab:hover{background:var(--surface-2); color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--bg)}
+.tab[aria-selected="true"] .n{opacity:.8}
+.tab:focus-visible,.btn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.sep{width:2px; align-self:stretch; background:var(--line); margin-inline:4px; flex:none}
+.pager{flex:none; font-family:var(--mono); font-size:24px; color:var(--ink-2); white-space:nowrap}
+
+/* ---------- panels ---------- */
+main{min-height:0; overflow:hidden}
+.panel{height:100%; overflow:auto; padding-block:28px 24px}
+.wrap{max-width:1720px; margin-inline:auto; height:100%; display:flex; flex-direction:column; gap:24px}
+.head{display:grid; gap:6px}
+.eyebrow{font-family:var(--mono); font-size:24px; font-weight:600; color:var(--accent); letter-spacing:.06em}
+h2{font-size:clamp(34px,2.9vw,50px); font-weight:900; line-height:1.2; text-wrap:balance; letter-spacing:.01em}
+.lead{font-size:clamp(24px,1.6vw,28px); color:var(--ink-2); max-width:62ch}
+.lead b{color:var(--ink)}
+
+ul.pts{list-style:none; padding:0; display:grid; gap:10px}
+ul.pts li{position:relative; padding-left:26px}
+ul.pts li::before{content:""; position:absolute; left:2px; top:.62em; width:10px; height:10px; background:var(--mk,var(--ink-2))}
+.muted{color:var(--ink-2)}
+
+.chip{
+  display:inline-block; font-family:var(--sans); font-size:24px; font-weight:700;
+  padding:0 12px; border-radius:999px; line-height:1.5; white-space:nowrap;
+}
+.c-cloud{color:var(--cloud); background:var(--cloud-bg)}
+.c-local{color:var(--local); background:var(--local-bg)}
+.c-hybrid{color:var(--hybrid); background:var(--hybrid-bg)}
+.c-human{color:var(--human); background:var(--human-bg)}
+.c-accent{color:var(--accent); background:var(--accent-bg)}
+
+/* ---------- T1: planning ---------- */
+.flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:10px}
+.flow .st{
+  flex:1 1 180px; background:var(--surface); border:2px solid var(--line); border-radius:10px;
+  padding:12px 16px; display:grid; gap:2px; align-content:start;
+}
+.flow .st.hot{border-color:var(--accent); background:var(--accent-bg)}
+.flow .st .k{font-family:var(--mono); font-size:24px; color:var(--ink-2)}
+.flow .st .v{font-weight:700}
+.flow .ar{align-self:center; font-size:28px; color:var(--ink-2)}
+.qs{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:2px solid var(--ink)}
+.qs > div{padding:18px 24px 6px; border-left:1px solid var(--line); display:grid; gap:8px; align-content:start}
+.qs > div:first-child{border-left:0; padding-left:0}
+.qs h3{font-size:30px; font-weight:900}
+.big-q{
+  margin-top:auto; display:flex; flex-wrap:wrap; align-items:center; gap:14px 22px;
+  padding:18px 26px; background:var(--ink); color:var(--bg); border-radius:12px;
+}
+.big-q p{font-size:30px; font-weight:700}
+.big-q .chip{font-size:26px}
+
+/* ---------- T2: scenario ---------- */
+.scn{display:grid; grid-template-columns:1.25fr 1fr; gap:32px; flex:1; min-height:0}
+.ticket{
+  background:var(--surface); border:2px solid var(--ink); border-radius:12px; padding:24px 28px;
+  display:grid; gap:16px; align-content:start;
+}
+.ticket .tt{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-family:var(--mono); color:var(--ink-2)}
+.ticket blockquote{margin:0; font-size:30px; font-weight:700; line-height:1.4; border-left:6px solid var(--accent); padding-left:18px}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; font-variant-numeric:tabular-nums}
+.facts dt{color:var(--ink-2)}
+.facts dd{margin:0; font-weight:500}
+.side{display:grid; gap:18px; align-content:start}
+.side h3{font-size:28px; font-weight:900}
+.btn{
+  font:inherit; font-size:24px; cursor:pointer; border-radius:10px;
+  border:2px solid var(--line); background:var(--surface); color:var(--ink);
+  padding:8px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; text-align:left;
+}
+.btn:hover{border-color:var(--ink)}
+[data-k="local"]{--k:var(--local); --kbg:var(--local-bg)}
+[data-k="cloud"]{--k:var(--cloud); --kbg:var(--cloud-bg)}
+[data-k="hybrid"]{--k:var(--hybrid); --kbg:var(--hybrid-bg)}
+.choices{display:grid; gap:14px}
+.opt{
+  font:inherit; font-size:24px; cursor:pointer; text-align:left; color:var(--ink);
+  display:grid; grid-template-columns:auto 1fr; column-gap:18px; align-items:center;
+  padding:14px 22px; border:2px solid var(--line); border-radius:12px; background:var(--surface);
+}
+.opt:hover{border-color:var(--k)}
+.opt .dot{grid-row:span 2; width:28px; height:28px; border-radius:50%; border:3px solid var(--line); background:var(--surface)}
+.opt .t{font-size:28px; font-weight:900; color:var(--k)}
+.opt .s{color:var(--ink-2)}
+.opt[aria-checked="true"]{border-color:var(--k); background:var(--kbg)}
+.opt[aria-checked="true"] .dot{border-color:var(--k); background:var(--k); box-shadow:inset 0 0 0 5px var(--kbg)}
+.opt:focus-visible,.seg button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+/* ---------- T3: problems ---------- */
+.head-row{display:flex; justify-content:space-between; align-items:flex-end; gap:12px 24px; flex-wrap:wrap}
+.seg{display:flex; gap:4px; padding:4px; border-radius:12px; background:var(--surface-2)}
+.seg button{font:inherit; font-size:24px; font-weight:700; border:0; background:none; color:var(--ink-2); padding:4px 16px; border-radius:9px; cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--k); box-shadow:0 1px 3px rgba(0,0,0,.12)}
+h2 .pick{color:var(--k)}
+.v1{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.v1 .st{background:var(--surface); border:2px dashed var(--line); border-radius:10px; padding:6px 14px; display:flex; gap:10px; align-items:center}
+.v1 .ar{color:var(--ink-2); font-size:28px}
+.probs{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; flex:1; min-height:0}
+.prob{background:var(--surface); border-radius:12px; padding:16px 22px; display:grid; gap:8px; align-content:start; border:2px solid color-mix(in srgb,var(--warn) 55%,var(--line))}
+.prob .pn{font-family:var(--mono); font-weight:600; color:var(--warn)}
+.prob h3{font-size:29px; font-weight:900; line-height:1.3; text-wrap:balance}
+.prob .row{display:grid; gap:2px}
+.prob .lab{font-weight:700}
+.prob .eg .lab{color:var(--warn)}
+.probs.watch{grid-template-rows:auto auto; flex:0 0 auto; gap:16px}
+.probs.watch .prob{border-color:color-mix(in srgb,var(--hybrid) 55%,var(--line))}
+.probs.watch .pn{color:var(--hybrid)}
+.prob .eg{border-top:1px solid var(--line); padding-top:8px}
+
+/* ---------- T4: revised flow ---------- */
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.step{background:var(--surface); border-radius:12px; padding:16px 22px; display:grid; gap:8px; align-content:start; border:2px solid var(--line)}
+.step .top{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.step .no{font-family:var(--mono); font-weight:600; font-size:28px; color:var(--ink-2)}
+.step h3{font-size:28px; font-weight:900}
+.step ul.pts{gap:2px; --mk:var(--local)}
+.step.l{border-color:color-mix(in srgb,var(--local) 45%,var(--line))}
+.step.c{border-color:color-mix(in srgb,var(--cloud) 45%,var(--line))}
+.boundary{
+  margin-top:auto; display:grid; grid-template-columns:auto 1fr; gap:6px 24px; align-items:baseline;
+  padding:16px 24px; border-radius:12px; background:var(--surface-2);
+}
+.boundary .k{font-weight:900}
+
+/* ---------- T5/T6: quad ---------- */
+.quad{display:grid; grid-template-columns:1fr 1fr; flex:1; min-height:0; border-top:2px solid var(--ink)}
+.quad > div{padding:18px 28px 18px 0; display:grid; gap:10px; align-content:start}
+.quad > div:nth-child(2n){padding-left:28px; padding-right:0; border-left:1px solid var(--line)}
+.quad > div:nth-child(n+3){border-top:1px solid var(--line)}
+.quad h3{font-size:30px; font-weight:900; display:flex; align-items:baseline; gap:12px}
+.quad h3 .tagline{font-family:var(--mono); font-size:24px; font-weight:500; color:var(--ink-2)}
+.t-cloud{--mk:var(--cloud)} .t-local{--mk:var(--local)} .t-hybrid{--mk:var(--hybrid)}
+.t-cloud h2 .hl{color:var(--cloud)} .t-local h2 .hl{color:var(--local)} .t-hybrid h2 .hl{color:var(--hybrid)}
+.formula{font-family:var(--mono); font-size:24px; background:var(--surface-2); padding:2px 10px; border-radius:6px; white-space:nowrap}
+
+/* ---------- T7: hybrid ---------- */
+.patterns{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0}
+.pat{background:var(--surface); border:2px solid var(--hybrid); border-radius:12px; padding:18px 24px; display:grid; gap:10px; align-content:start}
+.pat h3{font-size:30px; font-weight:900}
+.lanes{display:grid; grid-template-columns:auto 1fr; gap:12px 16px; align-items:baseline; list-style:none; padding:0; margin:0}
+.lanes .chip{justify-self:start}
+.pat .eg{color:var(--ink-2); border-top:1px solid var(--line); padding-top:10px; margin-top:4px}
+.pat .eg b{color:var(--ink)}
+.tri{display:grid; grid-template-columns:repeat(3,1fr); border-top:2px solid var(--ink); margin-top:auto}
+.tri > div{padding:16px 24px 0; border-left:1px solid var(--line); display:grid; gap:8px; align-content:start}
+.tri > div:first-child{border-left:0; padding-left:0}
+.tri h3{font-size:28px; font-weight:900}
+
+/* ---------- T8: matrix ---------- */
+.mx-wrap{display:grid; grid-template-columns:1.35fr 1fr; gap:40px; flex:1; min-height:0}
+.mx{display:grid; grid-template-columns:auto 1fr 1fr; grid-template-rows:auto 1fr 1fr; gap:10px}
+.mx .ax{font-weight:700; color:var(--ink-2); display:flex; align-items:center; justify-content:center; text-align:center}
+.mx .ax.row{writing-mode:vertical-rl; padding-inline:4px; letter-spacing:.1em}
+.mx .cell{border-radius:12px; padding:16px 22px; display:grid; gap:6px; align-content:center}
+.mx .cell .d{font-size:32px; font-weight:900}
+.mx .cell.cloud{background:var(--cloud-bg)} .mx .cell.cloud .d{color:var(--cloud)}
+.mx .cell.local{background:var(--local-bg)} .mx .cell.local .d{color:var(--local)}
+.mx .cell.hybrid{background:var(--hybrid-bg); outline:3px solid var(--hybrid); outline-offset:-3px}
+.mx .cell.hybrid .d{color:var(--hybrid)}
+.mx .cell.any{background:var(--surface-2)}
+.take{display:grid; gap:22px; align-content:start}
+.take > div{display:grid; gap:6px}
+.take h3{font-size:28px; font-weight:900}
+.take .again{border-top:2px solid var(--ink); padding-top:16px}
+
+
+/* ---------- Model unit ---------- */
+.tblwrap{overflow-x:auto}
+.bt{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums}
+.bt th{text-align:left; font-weight:700; color:var(--ink-2); border-bottom:2px solid var(--ink); padding:4px 14px 6px 0; white-space:nowrap}
+.bt td{padding:6px 14px 6px 0; border-bottom:1px solid var(--line); vertical-align:baseline}
+.bt td.num,.bt th.num{font-family:var(--mono); text-align:right; white-space:nowrap}
+.bt td.num.hi{font-weight:600; color:var(--accent)}
+.bt .nm{font-weight:700; white-space:nowrap}
+.bt .mono{font-family:var(--mono); font-weight:600}
+.bt .cat{color:var(--ink-2); white-space:nowrap}
+.note{color:var(--ink-2)}
+.checks{display:grid; grid-template-columns:1fr 1fr; border-top:2px solid var(--ink); flex:1; min-height:0}
+.checks > div{padding:16px 28px 16px 0; display:grid; gap:8px; align-content:start}
+.checks > div:nth-child(2n){padding-left:28px; padding-right:0; border-left:1px solid var(--line)}
+.checks > div:nth-child(n+3){border-top:1px solid var(--line)}
+.checks h3{font-size:30px; font-weight:900}
+.eg-line{font-family:var(--mono); font-size:24px; background:var(--surface-2); border-radius:6px; padding:2px 10px; justify-self:start}
+.back{display:grid; grid-template-columns:1.1fr 1fr; gap:36px; flex:1; min-height:0}
+.back h3{font-size:30px; font-weight:900; margin-bottom:10px}
+.ladder{list-style:none; margin:0; padding:0; display:grid; gap:10px; counter-reset:st}
+.ladder li{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:baseline; background:var(--surface); border:2px solid var(--line); border-radius:10px; padding:8px 16px}
+.ladder li::before{counter-increment:st; content:counter(st,decimal-leading-zero); font-family:var(--mono); font-weight:600; color:var(--ink-2)}
+.ladder li.key{border-color:var(--accent); background:var(--accent-bg)}
+.thesis{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; padding:16px 24px; background:var(--ink); color:var(--bg); border-radius:12px}
+.thesis p{font-size:28px; font-weight:700}
+.shift{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+.shift > div{background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:16px 22px; display:grid; gap:8px; align-content:start}
+.shift h3{font-size:30px; font-weight:900; display:flex; gap:12px; align-items:center}
+.axes{display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:2px solid var(--ink)}
+.axes > div{padding:14px 28px 0 0; display:grid; gap:6px; align-content:start}
+.axes > div + div{padding-left:28px; padding-right:0; border-left:1px solid var(--line)}
+.axes h3{font-size:28px; font-weight:900}
+.tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+.tier{background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:16px 22px; display:grid; gap:8px; align-content:start}
+.tier .lvl{font-family:var(--mono); font-weight:600; color:var(--ink-2)}
+.tier h3{font-size:34px; font-weight:900}
+.tier .price{font-family:var(--mono); font-size:24px; font-variant-numeric:tabular-nums}
+.tier.top{border-color:var(--accent)}
+.insight{display:grid; grid-template-columns:auto 1fr; gap:4px 24px; padding:14px 24px; border-radius:12px; background:var(--surface-2); align-items:baseline}
+.insight .k{font-weight:900}
+[data-k="m"]{--k:var(--ink); --kbg:var(--surface-2)}
+.mopts{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.ans2{display:grid; grid-template-columns:1fr 1fr; gap:36px; flex:1; min-height:0}
+.ans2 > div{display:grid; gap:12px; align-content:start}
+.ans2 h3{font-size:32px; font-weight:900; border-bottom:2px solid var(--ink); padding-bottom:6px}
+.kv{display:grid; grid-template-columns:auto 1fr; gap:8px 18px; align-items:baseline}
+.kv dt{font-weight:700; white-space:nowrap}
+.kv dd{margin:0}
+.kv dd b{color:var(--accent)}
+
+
+/* ---------- group switch ---------- */
+.grp{display:flex; gap:4px; padding:3px; border-radius:10px; background:var(--surface-2); flex:none; align-self:center; margin-bottom:6px}
+.grp button{font:inherit; font-size:24px; font-weight:700; border:0; background:none; color:var(--ink-2); padding:2px 12px; border-radius:8px; cursor:pointer; white-space:nowrap}
+.grp button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.grp button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+/* ---------- local models ---------- */
+.hf{display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:40px; flex:1; min-height:0}
+.hf-card{background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:28px; display:grid; gap:18px; align-content:center; justify-items:start}
+.hf-brand{display:flex; align-items:center; gap:18px; color:var(--ink)}
+.hf-ico{width:88px; height:88px; flex:none}
+.hf-txt{height:40px; width:auto}
+.linkbtn{display:inline-flex; align-items:center; gap:10px; font-family:var(--mono); font-size:24px; font-weight:600; color:var(--bg); background:var(--ink); padding:8px 18px; border-radius:10px; text-decoration:none}
+.linkbtn:hover{background:var(--accent)}
+.linkbtn:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+.ow{border-top:1px solid var(--line); padding-top:14px; display:grid; gap:8px}
+.ow b{font-weight:900}
+.look h3{font-size:30px; font-weight:900; margin-bottom:10px}
+.look .kv dt{min-width:5em}
+.lic td.nw{white-space:nowrap; font-weight:700}
+.lic td.lv{white-space:nowrap; font-family:var(--mono); letter-spacing:.1em}
+.lv .on{color:var(--local)} .lv .off{color:var(--line)}
+.lv.no .on{color:var(--warn)}
+.mem{display:grid; grid-template-columns:minmax(0,0.85fr) minmax(0,1.15fr); gap:36px; flex:1; min-height:0}
+.mem .kv{gap:12px 18px}
+.mem h3{font-size:28px; font-weight:900; margin-bottom:8px}
+.arena{display:grid; grid-template-columns:1fr 1fr; gap:36px; flex:1; min-height:0}
+.arena h3{font-size:30px; font-weight:900; margin-bottom:10px}
+.arena .ladder li{padding:6px 16px}
+
+
+/* ---------- memory calculator ---------- */
+.calc{display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:36px; flex:1; min-height:0}
+.ctl{display:grid; gap:18px; align-content:start}
+.ctl-row{display:grid; gap:8px}
+.ctl-k{font-weight:900; font-size:26px}
+.chooser{display:flex; flex-wrap:wrap; gap:8px}
+.chooser button{font:inherit; font-size:24px; font-family:var(--mono); font-weight:600; min-width:4.2em; padding:6px 14px; border-radius:10px; border:2px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer}
+.chooser button:hover{border-color:var(--ink)}
+.chooser button[aria-checked="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.chooser button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.concept{border-top:1px solid var(--line); padding-top:12px}
+#l3 .seg button[aria-pressed="true"]{color:var(--ink)}
+.res{display:grid; gap:16px; align-content:start; align-self:start; background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:18px 24px}
+.meter{display:grid; gap:6px}
+.mh{display:flex; justify-content:space-between; align-items:baseline; gap:12px}
+.mk{font-weight:900; font-size:26px}
+.mv{font-family:var(--mono); font-weight:600; font-size:28px; font-variant-numeric:tabular-nums}
+.mbar{height:14px; border-radius:7px; background:var(--surface-2); overflow:hidden}
+.mbar i{display:block; height:100%; border-radius:7px; background:var(--accent); width:0}
+#b-mem{background:var(--cloud)} #b-spd{background:var(--local)} #b-q{background:var(--hybrid)}
+.ms{color:var(--ink-2)}
+@media (prefers-reduced-motion:no-preference){ .mbar i{transition:width .35s ease} }
+.gemma{flex:1; min-height:0; max-width:900px}
+
+
+/* ---------- hardware ---------- */
+.fcts{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; flex:1; min-height:0; align-content:start}
+.fct{background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:14px 20px; display:grid; gap:6px; align-content:start}
+.fct h3{font-size:28px; font-weight:900}
+.est{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:28px; flex:1 0 auto}
+.est-ctl{display:grid; gap:14px; align-content:start}
+.est-ctl .ctl-row{grid-template-columns:4.2em 1fr; align-items:start; gap:12px}
+.est-ctl .ctl-k{font-size:24px; line-height:1.2; padding-top:8px}
+.est-ctl .chooser button{padding:4px 12px; min-width:3.2em}
+.chooser.task button{font-family:var(--sans); min-width:0}
+.est-res{gap:12px}
+.mv.big{font-size:40px}
+.stack{display:flex; height:22px; border-radius:8px; overflow:hidden; background:var(--surface-2)}
+.stack i{display:block; height:100%}
+.sw{background:var(--cloud)} .sk{background:var(--accent)} .so{background:var(--ink-2)}
+.legend dt{display:flex; align-items:center; gap:10px}
+.legend dd{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.dotk{width:16px; height:16px; border-radius:4px; display:inline-block}
+.rec{border-top:1px solid var(--line); padding-top:10px; display:grid; gap:2px}
+.rec .lab{font-weight:900; color:var(--local)}
+#e-rec{font-size:28px; font-weight:700}
+.tiertbl th[scope="row"]{font-weight:900; color:var(--ink); border-bottom:1px solid var(--line); white-space:nowrap; padding-right:20px}
+.tiertbl thead th{color:var(--ink); font-weight:900; font-size:26px; vertical-align:bottom}
+.tiertbl .tn{display:block; font-family:var(--mono); font-size:24px; font-weight:600; color:var(--accent)}
+.tiertbl td{padding-right:18px}
+.tcards{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; flex:1; min-height:0}
+.tcard{background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:12px 18px; display:grid; gap:8px; align-content:start}
+.tcard h3{font-size:28px; font-weight:900}
+.tcard .tn{display:block; font-family:var(--mono); font-size:24px; font-weight:600; color:var(--accent)}
+#e-u button{min-width:3.2em}
+.pts.neg{--mk:var(--warn)}
+.fit{border-top:1px solid var(--line); padding-top:8px}
+.fit .lab{display:block; font-weight:900; color:var(--local)}
+
+
+/* ---------- factors ---------- */
+.fx{display:grid; grid-template-columns:minmax(220px,0.32fr) minmax(0,1fr); gap:28px; flex:1; min-height:0}
+.fx-nav{display:grid; gap:6px; align-content:start}
+.fx-nav button{font:inherit; font-size:24px; font-weight:700; text-align:left; display:flex; gap:10px; align-items:baseline; padding:6px 14px; border-radius:10px; border:2px solid transparent; background:none; color:var(--ink-2); cursor:pointer}
+.fx-nav button .n{font-family:var(--mono); font-weight:600; opacity:.6}
+.fx-nav button:hover{background:var(--surface-2); color:var(--ink)}
+.fx-nav button[aria-selected="true"]{background:var(--surface); border-color:var(--accent); color:var(--ink)}
+.fx-nav button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.fx-d{display:grid; gap:12px; align-content:start}
+.fx-d h3{font-size:32px; font-weight:900}
+.fx-d .kv dd b{color:var(--ink)}
+.fx-demo{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:24px; background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:14px 20px}
+.fx-ctl{display:grid; gap:10px; align-content:start}
+.fx-ctl .ctl-row{grid-template-columns:auto 1fr; align-items:center; gap:12px}
+.fx-ctl .ctl-k{font-size:24px}
+.fx-ctl .chooser button{padding:2px 10px; min-width:0; font-size:24px}
+.fx-out{display:grid; gap:6px; align-content:start}
+.fx-out .lab{color:var(--ink-2)}
+.fx-out .mv{font-size:36px}
+.demo-tag{font-family:var(--mono); color:var(--accent); font-weight:600}
+.eco{display:grid; grid-template-columns:auto auto; gap:2px 18px; justify-content:start}
+.eco .y{color:var(--local); font-weight:700} .eco .m{color:var(--accent); font-weight:700} .eco .x{color:var(--warn); font-weight:700}
+/* ---------- formula view ---------- */
+.fml{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px; flex:1; min-height:0}
+.fsteps{list-style:none; margin:0; padding:0; display:grid; gap:12px; align-content:start}
+.fsteps li{display:grid; gap:4px; background:var(--surface); border:2px solid var(--line); border-radius:10px; padding:10px 16px}
+.fsteps code,.flines{font-family:var(--sans); font-size:24px}
+.fsteps code{background:var(--surface-2); border-radius:6px; padding:1px 8px; justify-self:start}
+.fsub{display:grid; gap:10px; align-content:start}
+.fsub h3{font-size:28px; font-weight:900}
+.flines{display:grid; gap:4px; background:var(--surface-2); border-radius:10px; padding:10px 16px; font-variant-numeric:tabular-nums}
+.flines b{color:var(--accent)}
+.bt.small td,.bt.small th{padding-top:2px; padding-bottom:2px}
+.ans2 .flines{margin-bottom:4px}
+
+
+/* ---------- inference ---------- */
+.svc td{vertical-align:baseline}
+.st{font-size:24px; margin-right:8px}
+.st.y{color:var(--local)} .st.m{color:var(--accent)} .st.x{color:var(--warn)}
+.env{display:grid; grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr); gap:32px; flex:1; min-height:0}
+.env-ctl{display:grid; gap:14px; align-content:start}
+.env-out{display:grid; gap:12px; align-content:start; align-self:start; background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:16px 22px}
+.env-out h3{font-size:26px; font-weight:900; margin-bottom:4px}
+.svcchips{display:flex; flex-wrap:wrap; gap:8px}
+.svcchip{display:inline-flex; gap:6px; align-items:baseline; border-radius:999px; padding:0 14px; font-weight:700; border:2px solid var(--line)}
+.svcchip.y{border-color:var(--local); color:var(--local)} .svcchip.m{border-color:var(--accent); color:var(--accent)} .svcchip small{font-size:24px; font-weight:500; opacity:.8}
+.svcchip.x{color:var(--ink-2); text-decoration:line-through; opacity:.7}
+.chooser button[disabled]{opacity:.35; cursor:not-allowed}
+.perf{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px; flex:1; min-height:0}
+.off{display:grid; gap:10px; align-self:start}
+.off .ctl-row{display:grid; gap:8px}
+.cmpkv{align-content:start; gap:14px 18px}
+.tool{display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:32px; flex:1; min-height:0}
+.tool-l{display:grid; gap:16px; align-content:start; justify-items:start}
+.tool-l .ladder{width:100%}
+.tool-r{display:grid; gap:12px; align-content:start}
+.tool-r h3{font-size:28px; font-weight:900}
+.ic{font-family:var(--mono); font-size:24px; background:var(--surface-2); border-radius:6px; padding:0 6px}
+.term{font-family:var(--mono); font-size:24px; line-height:1.45; background:#15252B; color:#E4ECEA; border-radius:12px; padding:16px 20px; display:grid; align-content:start; white-space:pre; overflow-x:auto}
+.term .c{color:#EBAA4A} .term .d{color:#8FA3A8} .term em{font-style:normal; font-family:var(--sans); color:#78D0A3}
+
+
+/* ---------- takeaways ---------- */
+.tks{display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; flex:1; min-height:0; align-content:start}
+.tk{background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:14px 22px; display:grid; gap:8px; align-content:start}
+.tk-t{font-size:28px; font-weight:900; display:flex; gap:12px; align-items:baseline}
+.tk-t .n{font-family:var(--mono); font-weight:600; color:var(--accent)}
+.tk .pts{gap:4px}
+
+/* ---------- responsive ---------- */
+@media (max-height:940px){
+  .bar{padding-block:6px}
+  .secbar{padding-top:4px}
+  .sec{padding:2px 16px 6px}
+  .panel{padding-block:14px 10px}
+  .wrap{gap:12px}
+  h2{font-size:34px}
+  .step{padding:8px 18px; gap:2px}
+  .steps{gap:12px}
+  .step .top{line-height:1.3}
+  .boundary{padding:8px 20px; gap:2px 20px}
+  .prob{padding:10px 18px; gap:4px}
+}
+@media (max-height:800px){
+  .tcard{gap:4px; padding:10px 16px} .tcard ul.pts{gap:2px} .fit{padding-top:4px}
+  .est-ctl{gap:6px} .est-ctl .chooser{gap:6px} .est-ctl .chooser button{padding:1px 10px}
+  .est-res{gap:6px; padding:12px 20px} .mv.big{font-size:34px}
+  .wrap{gap:10px}
+  .fx-d{gap:6px} .fx-d h3{font-size:28px} .fx-demo{padding:8px 16px; gap:16px} .fx-ctl{gap:4px} .fx-out{gap:2px} .fx-out .mv{font-size:30px}
+  .fsteps{gap:6px} .fsteps li{padding:4px 14px; gap:2px} .fsub{gap:6px} .flines{gap:0; padding:6px 14px}
+  .ans2 > div{gap:6px} .ans2 h3{font-size:28px; padding-bottom:2px}
+  .tk{padding:8px 18px; gap:4px} .tks{gap:10px 16px}
+  .env-out{gap:6px; padding:10px 18px} .term{padding:10px 16px; line-height:1.35} .tool-l{gap:10px}
+}
+@media (max-width:1560px){ .brand{display:none} }
+@media (max-width:1500px){ .pager{display:none} }
+@media (max-width:1100px){
+  .qs,.probs,.steps,.tri{grid-template-columns:1fr 1fr}
+  .scn,.mx-wrap,.patterns,.back,.shift,.ans2,.tiers,.hf,.mem,.arena,.calc,.est,.fml,.fx,.fx-demo,.env,.perf,.tool{grid-template-columns:1fr}
+  .fcts,.tcards{grid-template-columns:1fr 1fr}
+  .qs > div,.tri > div{border-left:0; padding-left:0}
+}
+@media (max-width:700px){
+  .qs,.probs,.steps,.tri,.quad{grid-template-columns:1fr}
+  .quad > div,.quad > div:nth-child(2n){padding:16px 0; border-left:0; border-top:1px solid var(--line)}
+  .flow .ar,.v1 .ar{display:none}
+  .brand,.pager{display:none}
+  .plan,.checks,.axes,.mopts,.fcts,.tcards,.tks{grid-template-columns:1fr}
+  .checks > div,.checks > div:nth-child(2n),.axes > div + div{padding:14px 0; border-left:0; border-top:1px solid var(--line)}
+  .plan > div,.plan > div:nth-child(2n){padding:16px 0; border-left:0; border-top:1px solid var(--line)}
+  .mx{grid-template-columns:auto 1fr}
+  .mx .ax.col{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .panel:not([hidden]) .wrap{animation:in .28s ease-out}
+  @keyframes in{from{transform:translateY(8px)}to{transform:none}}
+}
 </style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<div class="login-overlay" id="loginOverlay">
-  <form class="login-card" id="loginForm">
-    <div class="eyebrow">LLM MODEL LAB</div>
-    <h1>輸入課程通關資訊</h1>
-    <p><b>課程代碼</b>只用來驗證是否可以進入；登入後系統以「<b>姓名 + 組別</b>」作為你的課堂帳號辨識鍵。</p>
-    <input id="courseCodeInput" autocomplete="off" maxlength="32" placeholder="課程代碼，例如：SCU1151" required>
-    <input id="nameInput" autocomplete="name" maxlength="40" placeholder="姓名，例如：王小明" required>
-    <input id="groupInput" inputmode="numeric" type="number" min="1" max="999" step="1" placeholder="組別，例如：3" required>
-    <div class="login-error" id="loginError"></div>
-    <button class="btn" style="width:100%" type="submit">進入課程</button>
-    <p class="note">第一次使用這組「姓名 + 組別」會自動建立帳號；之後用相同資料登入會接續原本的 Token 額度與使用紀錄。</p>
-  </form>
-</div>
-<div class="shell">
-<header class="top">
-  <div class="brandrow">
-    <div class="brand">大型語言模型選型實驗室</div>
-    <div class="userbox"><span id="userName">—</span><span class="budget-pill">剩餘 <span id="budgetTop">— tokens</span></span><button class="btn secondary" id="logoutBtn" style="padding:5px 9px">切換使用者</button></div>
+
+
+<header>
+  <div class="secbar">
+    <div class="brand">企業 LLM 導入</div>
+    <nav class="secs" role="tablist" aria-label="課程單元">
+      <button class="sec" role="tab" data-s="0" id="s1"><span class="n">1</span>架構選型</button>
+      <button class="sec" role="tab" data-s="1" id="s2"><span class="n">2</span>模型</button>
+      <button class="sec" role="tab" data-s="2" id="s3"><span class="n">3</span>硬體</button>
+      <button class="sec" role="tab" data-s="3" id="s4"><span class="n">4</span>推論</button>
+      <button class="sec" role="tab" data-s="4" id="s5"><span class="n">5</span>Takeaways</button>
+    </nav>
+    <div class="grp" data-s="1" role="group" aria-label="模型類型" hidden><button data-u="nav-mc" aria-pressed="true" id="g-mc">雲端模型</button><button data-u="nav-ml" aria-pressed="false" id="g-ml">地端模型</button></div>
   </div>
-  <nav class="nav" aria-label="課程分頁">
-    <button data-tab="p1" aria-selected="true">01A 為什麼有這麼多模型</button>
-    <button data-tab="p1b">01B 模型差異不只能力</button>
-    <button data-tab="p2">02 模型不是越大越好</button>
-    <button data-tab="p3">03A 品質 × 速度 × 成本</button>
-    <button data-tab="p3b">03B 任務複雜度 1–5</button>
-    <button data-tab="p4">04 純文字任務實驗</button>
-  </nav>
+  <div class="bar">
+    <nav class="tabs" role="tablist" aria-label="架構選型主題" data-s="0">
+      <button class="tab" role="tab" id="b1" aria-controls="t1"><span class="n">1</span>規劃挑選</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="b2" aria-controls="t2"><span class="n">2</span>情境題</button>
+      <button class="tab" role="tab" id="b3" aria-controls="t3"><span class="n">3</span>找出問題</button>
+      <button class="tab" role="tab" id="b4" aria-controls="t4"><span class="n">4</span>修正方案</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="b5" aria-controls="t5"><span class="n">5</span>雲端</button>
+      <button class="tab" role="tab" id="b6" aria-controls="t6"><span class="n">6</span>地端</button>
+      <button class="tab" role="tab" id="b7" aria-controls="t7"><span class="n">7</span>混合式</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="b8" aria-controls="t8"><span class="n">8</span>選型矩陣</button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="雲端模型主題" data-s="1" id="nav-mc" hidden>
+      <button class="tab" role="tab" id="bm1" aria-controls="m1"><span class="n">1</span>評測指標</button>
+      <button class="tab" role="tab" id="bm2" aria-controls="m2"><span class="n">2</span>讀懂分數</button>
+      <button class="tab" role="tab" id="bm3" aria-controls="m3"><span class="n">3</span>回到問題</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bm4" aria-controls="m4"><span class="n">4</span>選型思維</button>
+      <button class="tab" role="tab" id="bm5" aria-controls="m5"><span class="n">5</span>GPT-6</button>
+      <button class="tab" role="tab" id="bm6" aria-controls="m6"><span class="n">6</span>跨廠對照</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bm7" aria-controls="m7"><span class="n">7</span>情境一</button>
+      <button class="tab" role="tab" id="bm8" aria-controls="m8"><span class="n">8</span>情境二</button>
+      <button class="tab" role="tab" id="bm9" aria-controls="m9"><span class="n">9</span>解析</button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="地端模型主題" data-s="1" id="nav-ml" hidden>
+      <button class="tab" role="tab" id="bl1" aria-controls="l1"><span class="n">1</span>平台</button>
+      <button class="tab" role="tab" id="bl2" aria-controls="l2"><span class="n">2</span>開發者</button>
+      <button class="tab" role="tab" id="bl3" aria-controls="l3"><span class="n">3</span>記憶體</button>
+      <button class="tab" role="tab" id="bl4" aria-controls="l4"><span class="n">4</span>授權</button>
+      <button class="tab" role="tab" id="bl5" aria-controls="l5"><span class="n">5</span>評測</button>
+      <button class="tab" role="tab" id="bl6" aria-controls="l6"><span class="n">6</span>Arena</button>
+    
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bl7" aria-controls="l7"><span class="n">7</span>近期模型</button>
+      <button class="tab" role="tab" id="bl8" aria-controls="l8"><span class="n">8</span>Groq</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bl9" aria-controls="l9"><span class="n">9</span>情境一</button>
+      <button class="tab" role="tab" id="bl10" aria-controls="l10"><span class="n">10</span>情境二</button>
+      <button class="tab" role="tab" id="bl11" aria-controls="l11"><span class="n">11</span>解析</button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="硬體主題" data-s="2" hidden>
+      <button class="tab" role="tab" id="bh1" aria-controls="h1"><span class="n">1</span>效能因素</button>
+      <button class="tab" role="tab" id="bh2" aria-controls="h2"><span class="n">2</span>記憶體試算</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bh3" aria-controls="h3"><span class="n">3</span>級距總覽</button>
+      <button class="tab" role="tab" id="bh4" aria-controls="h4"><span class="n">4</span>級距比較</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="bh5" aria-controls="h5"><span class="n">5</span>情境一</button>
+      <button class="tab" role="tab" id="bh6" aria-controls="h6"><span class="n">6</span>情境二</button>
+      <button class="tab" role="tab" id="bh7" aria-controls="h7"><span class="n">7</span>解析</button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="推論主題" data-s="3" hidden>
+      <button class="tab" role="tab" id="br1" aria-controls="r1"><span class="n">1</span>服務總覽</button>
+      <button class="tab" role="tab" id="br2" aria-controls="r2"><span class="n">2</span>環境分析</button>
+      <button class="tab" role="tab" id="br3" aria-controls="r3"><span class="n">3</span>效能影響</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="br4" aria-controls="r4"><span class="n">4</span>Ollama</button>
+      <button class="tab" role="tab" id="br5" aria-controls="r5"><span class="n">5</span>LM Studio</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="br6" aria-controls="r6"><span class="n">6</span>情境一</button>
+      <button class="tab" role="tab" id="br7" aria-controls="r7"><span class="n">7</span>情境二</button>
+      <button class="tab" role="tab" id="br8" aria-controls="r8"><span class="n">8</span>解析</button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="Takeaways" data-s="4" hidden>
+      <button class="tab" role="tab" id="bt1" aria-controls="k1"><span class="n">1</span>企業學員</button>
+      <button class="tab" role="tab" id="bt2" aria-controls="k2"><span class="n">2</span>在學學生</button>
+    </nav>
+    <div class="pager" id="pager">1 / 8</div>
+  </div>
 </header>
+
 <main>
-<section id="p1" class="panel active">
-  <div class="head"><div class="eyebrow">01A / WHY SO MANY MODELS</div><h1>為什麼大型語言模型越來越多？</h1><p class="lead">因為企業工作的需求不只有「答得最聰明」。最常見的差異先看三件事：<b>能力、速度、成本</b>。</p></div>
-  <div class="g3 grid">
-    <article class="card"><span class="tag">能力</span><div class="big">同一題，難度不同</div><p>分類與抽取通常不需要最高階推理；跨文件判斷、策略分析才需要更強能力。</p></article>
-    <article class="card"><span class="tag">速度</span><div class="big">有些工作不能等</div><p>即時客服、語音互動與大量批次任務，速度可能比「多想 20 秒」更重要。</p></article>
-    <article class="card"><span class="tag">成本</span><div class="big">每次呼叫都在花錢</div><p>同樣一萬次任務，單次差幾厘錢，放大後就可能形成顯著的月成本差異。</p></article>
-  </div>
-  <div class="result-callout" style="margin-top:20px"><b>先問：這個任務真的需要最強模型嗎？</b><span>模型選型的目標不是找出「最強」，而是找出「足以完成工作、成本合理、速度可接受」的模型。</span></div>
-</section>
-<section id="p1b" class="panel">
-  <div class="head"><div class="eyebrow">01B / MORE THAN INTELLIGENCE</div><h1>模型差異，不只有聰不聰明</h1><p class="lead">實際工作還會受到資料型態、工具能力與部署方式影響，因此同一個能力級距也可能有不同模型。</p></div>
-  <div class="g3 grid">
-    <article class="card"><span class="tag">輸入資料</span><div class="big">文字不是唯一輸入</div><p>圖片、文件、聲音、影片需要不同多模態能力；不是每個模型都支援相同輸入。</p></article>
-    <article class="card"><span class="tag">工具能力</span><div class="big">回答 vs. 做事</div><p>有些場景只要文字生成，有些需要搜尋、函式呼叫、程式執行或 Agent 能力。</p></article>
-    <article class="card"><span class="tag">部署與治理</span><div class="big">雲端、地端、混合</div><p>資料敏感度、法規與網路環境，也會限制模型可以在哪裡執行。</p></article>
-  </div>
-  <div class="scenario-row" style="margin-top:20px">
-    <div class="scenario"><b>選一個工作看看</b><select id="whyScenario"><option value="classify">每天 10,000 則留言分類</option><option value="report">分析三份供應商提案</option><option value="vision">讀取設備照片與標籤</option><option value="agent">跨系統查資料並完成工作</option></select></div>
-    <div class="result-callout"><span class="mono" id="whyLabel">大量、規則明確</span><b id="whyResult">優先看速度與成本，不一定需要最大模型。</b><span id="whyReason">先用最小可行模型驗證準確率，再升級。</span></div>
-  </div>
-</section>
-<section id="p2" class="panel">
-  <div class="head"><div class="eyebrow">02 / EMPLOYEE ANALOGY</div><h1>先認識：模型不是越大越好</h1><p class="lead">把模型想成公司裡不同職級的人。真正的管理問題不是「誰最厲害」，而是「這件工作需要誰來做」。</p></div>
-  <div class="g3 grid">
-    <article class="card employee"><span class="tag" style="background:var(--green-bg);color:var(--green)">Luna｜行政助理</span><div class="big">快、便宜、適合規則明確</div><ul><li>分類、抽取</li><li>格式整理</li><li>大量摘要</li><li>高流量重複任務</li></ul><div class="salary">API 級距：低成本</div></article>
-    <article class="card employee"><span class="tag" style="background:var(--blue-bg);color:var(--blue)">Sol｜資深專員</span><div class="big">需要判斷力的日常工作</div><ul><li>文件比較</li><li>報告撰寫</li><li>一般分析</li><li>中度複雜推理</li></ul><div class="salary">API 級距：中成本</div></article>
-    <article class="card employee"><span class="tag" style="background:var(--purple-bg);color:var(--purple)">Astra｜專家顧問</span><div class="big">高難度、多限制、答錯代價高</div><ul><li>複雜推理</li><li>深度研究</li><li>大型文件工作</li><li>困難 Agent 任務</li></ul><div class="salary">API 級距：高成本</div></article>
-  </div>
-  <div class="result-callout" style="margin-top:20px"><b>管理原則：讓最便宜、最快，且「足以完成工作」的模型先做。</b><span>只有當品質不足時，再往更高能力級距升級，而不是所有任務一律使用最強模型。</span></div>
-</section>
-<section id="p3" class="panel">
-  <div class="head"><div class="eyebrow">03A / TRADE-OFF</div><h1>模型選型是在平衡：品質 × 速度 × 成本</h1><p class="lead">一般趨勢是：<b>能力提高，通常成本也提高；複雜推理還可能拉長等待時間。</b>這裡看的是相對關係，不是固定 SLA。</p></div>
-  <div class="triangle-wrap">
-    <div class="controlbox">
-      <div><b>選擇能力級距</b><p class="note">點選不同模型，觀察三個指標如何改變。</p></div>
-      <div class="level-dots"><button data-level="0" class="active">Luna</button><button data-level="1">Sol</button><button data-level="2">Astra</button></div>
-      <div class="card" style="padding:16px"><div class="mono accent" id="tradeModel">GPT-6 Luna</div><div class="big" id="tradeRole">大量、規則明確任務</div><p id="tradeText">先用較低成本快速完成；若品質不夠，再升級。</p></div>
-      <div class="result-callout"><b>能力 ↑ → 通常成本 ↑、等待時間 ↑</b><span>但不是每個任務都會因此得到更好的商業結果。</span></div>
+<!-- ============ 1 規劃挑選 ============ -->
+<section class="panel" id="t1" role="tabpanel" aria-labelledby="b1">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">切入｜如何規劃挑選大型語言模型</div>
+      <h2>挑模型之前，先決定這件事該在哪裡跑</h2>
+      <p class="lead">企業導入生成式 AI，第一個決定不是「哪個模型最強」，而是<b>資料能去哪裡、任務需要多強的腦</b>。</p>
     </div>
-    <div class="card">
-      <h2 style="margin-top:0">相對指標</h2>
-      <div class="meters">
-        <div class="meter"><b>能力上限</b><div class="track"><div class="fill q" id="qualityBar"></div></div><span class="mono" id="qualityVal"></span></div>
-        <div class="meter"><b>回應速度</b><div class="track"><div class="fill s" id="speedBar"></div></div><span class="mono" id="speedVal"></span></div>
-        <div class="meter"><b>單次成本</b><div class="track"><div class="fill c" id="costBar"></div></div><span class="mono" id="costVal"></span></div>
+    <div class="flow" aria-label="選型決策流程">
+      <div class="st"><span class="k">起點</span><span class="v">業務問題</span></div><span class="ar" aria-hidden="true">→</span>
+      <div class="st hot"><span class="k">關卡</span><span class="v">資料敏感度</span></div><span class="ar" aria-hidden="true">→</span>
+      <div class="st hot"><span class="k">關卡</span><span class="v">任務複雜度</span></div><span class="ar" aria-hidden="true">→</span>
+      <div class="st hot"><span class="k">決定</span><span class="v">部署方式</span></div><span class="ar" aria-hidden="true">→</span>
+      <div class="st"><span class="k">最後才選</span><span class="v">模型・硬體・推論引擎</span></div>
+    </div>
+    <div class="qs">
+      <div>
+        <h3>資料能不能出廠？</h3>
+        <ul class="pts">
+          <li>客戶名單、報價、配方、產能</li>
+          <li>哪些欄位絕對不能離開公司</li>
+        </ul>
       </div>
-      <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-      <h3>以 1,000 input + 500 output tokens 示意</h3>
-      <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-top:12px"><div class="stat"><div class="k">Luna</div><div class="v">$0.00035</div></div><div class="stat"><div class="k">Sol</div><div class="v">$0.007</div></div><div class="stat"><div class="k">Astra</div><div class="v">$0.035</div></div></div>
-    </div>
-  </div>
-</section>
-<section id="p3b" class="panel">
-  <div class="head"><div class="eyebrow">03B / TASK COMPLEXITY</div><h1>任務複雜度 1–5，要怎麼判斷？</h1><p class="lead">這是本課程使用的<b>教學量尺</b>，不是產業通用標準。判斷四件事：步驟數、規則是否明確、需要整合多少資訊、是否存在衝突或取捨。</p></div>
-  <div class="complexity-grid" id="complexityCards">
-    <article class="complexity-card" data-cx="1"><div class="lvl">LEVEL 1</div><h3>直接執行</h3><p>單一步驟、規則明確、幾乎不需判斷。</p><div class="eg">例：把留言分成詢價／客訴。</div></article>
-    <article class="complexity-card active" data-cx="2"><div class="lvl">LEVEL 2</div><h3>整理轉換</h3><p>2–3 個明確步驟，輸出格式固定。</p><div class="eg">例：Email 擷取公司、姓名、日期。</div></article>
-    <article class="complexity-card" data-cx="3"><div class="lvl">LEVEL 3</div><h3>比較判斷</h3><p>整合多項資訊，依清楚條件做選擇。</p><div class="eg">例：依 5 個條件比較供應商。</div></article>
-    <article class="complexity-card" data-cx="4"><div class="lvl">LEVEL 4</div><h3>多步推理</h3><p>條件互相影響，存在例外、衝突與取捨。</p><div class="eg">例：插急單後判斷延誤與替代方案。</div></article>
-    <article class="complexity-card" data-cx="5"><div class="lvl">LEVEL 5</div><h3>開放策略</h3><p>目標不完全明確，資訊不完整，需要權衡風險。</p><div class="eg">例：規劃企業 AI 導入路線與優先順序。</div></article>
-  </div>
-  <div class="complexity-detail" style="margin-top:18px">
-    <div class="controlbox">
-      <div class="range-row"><label><span>任務複雜度</span><span id="complexityLabel">2 / 5</span></label><input id="complexity" type="range" min="1" max="5" value="2"></div>
-      <div class="result-callout"><span>起始模型建議</span><b id="tradeAdvice">Level 2 通常先從 Luna 測試。</b></div>
-    </div>
-    <div class="card"><div class="mono accent" id="cxTitle">LEVEL 2｜整理轉換</div><h2 id="cxCase" style="margin:6px 0">從 Email 擷取公司、聯絡人、需求與日期</h2><p id="cxWhy">規則清楚、欄位固定，需要少量理解，但不需要複雜取捨。</p></div>
-  </div>
-</section>
-<section id="p4" class="panel">
-  <div class="head"><div class="eyebrow">04 / TEXT MODEL LAB</div><h1>純文字任務：自己選模型，自己看結果</h1><p class="lead">每位學員都有獨立的 <b>Token 額度</b>。每種任務會隨機抽出 3–5 題；你可以切換 Luna / Sol / Astra，以及調整 reasoning effort 與最大輸出 token，並觀察不同設定對 Token、總耗時與 TTFT 的影響。</p></div>
-  <div class="lab-layout">
-    <aside class="sidebar">
-      <div class="box"><h3>你的 Token 額度</h3><div class="quota"><div><b id="quotaRemain">—</b> / <span id="quotaTotal">—</span> tokens</div><div class="quota-track"><div class="quota-fill" id="quotaFill"></div></div><div class="note">Input + Output Token 由 Cloudflare D1 後端累計，不會因重新整理而重置。</div></div></div>
-      <div class="box"><h3>任務</h3><div class="task-list" id="taskList"></div><button class="btn secondary" id="reshuffleBtn" style="width:100%;margin-top:10px">重新抽題</button></div>
-      <div class="box"><h3>模型設定</h3>
-        <div class="field"><label>Model</label><select id="modelSelect"><option value="luna">GPT-6 Luna</option><option value="sol">GPT-6 Sol</option><option value="astra">GPT-6 Astra</option></select></div>
-        <div class="field"><label>Reasoning effort</label><select id="reasoningSelect"><option value="none">none</option><option value="low">low</option><option value="medium" selected>medium</option><option value="high">high</option><option value="xhigh">xhigh</option></select></div>
-        <div class="field"><label>Max output tokens <span id="maxTokLabel" class="mono">500</span></label><input id="maxTokens" type="range" min="100" max="1000" step="100" value="500"></div>
-        <p class="note" id="paramHint">Luna / Sol 支援 none；Astra 會自動限制為 low 以上。</p>
+      <div>
+        <h3>需要多強的推理？</h3>
+        <ul class="pts">
+          <li>分類、抽取、摘要：小模型就夠</li>
+          <li>多步驟規劃、跨資料判斷：需要大模型</li>
+        </ul>
       </div>
-    </aside>
-    <div class="workspace">
-      <div class="task-head"><div><div class="eyebrow" id="taskEyebrow">任務 1</div><h2 id="taskTitle">簡單分類</h2><p id="taskDesc" style="margin:4px 0;color:var(--ink-2)"></p></div><div class="question-nav" id="questionNav"></div></div>
-      <div class="promptbox" id="promptText"></div>
-      <div class="runbar"><div class="note" id="runHint">同一題可以換不同模型重跑，比較品質、時間與成本。</div><button class="btn" id="runBtn">Run Model</button></div>
-      <div class="stats"><div class="stat"><div class="k">Total latency</div><div class="v" id="stLatency">—</div></div><div class="stat"><div class="k">TTFT</div><div class="v" id="stTtft">—</div></div><div class="stat"><div class="k">Input Token</div><div class="v" id="stInput">—</div></div><div class="stat"><div class="k">Output Token</div><div class="v" id="stOutput">—</div></div><div class="stat"><div class="k">Remaining</div><div class="v" id="stRemain">—</div></div></div>
-      <div class="note" id="lastRunMeta">每次執行都會記錄模型、參數、Input / Output Token、總耗時與 TTFT。</div>
-      <div><h3>模型回答</h3><div class="answer" id="answerBox">尚未執行。</div></div>
+      <div>
+        <h3>規模與成本怎麼算？</h3>
+        <ul class="pts">
+          <li>每天呼叫幾次、幾人同時用</li>
+          <li>要多快回應、能不能斷網</li>
+        </ul>
+      </div>
     </div>
+    <div class="big-q">
+      <p>全部用地端？全部用雲端？還是混合？</p>
+      <span class="chip c-local">地端</span><span class="chip c-cloud">雲端</span><span class="chip c-hybrid">混合式</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 情境題 ============ -->
+<section class="panel" id="t2" role="tabpanel" aria-labelledby="b2" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">情境題分析｜製造現場智慧排程</div>
+      <h2>週三下午，業務要插一張急單</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>插單請求 #RUSH-0924</span><span>來源：業務 LINE</span></div>
+        <blockquote>「A 級客戶追加 2,000 件，下週一一定要出貨，可以排進去嗎？」</blockquote>
+        <dl class="facts">
+          <dt>工廠規模</dt><dd>12 台機台、每週約 80 張工單</dd>
+          <dt>目前排程</dt><dd>本週產能已排到 92%</dd>
+          <dt>牽涉資料</dt><dd>訂單、客戶等級、機台狀況、物料庫存</dd>
+          <dt>要回答的</dt><dd>能不能插？會延誤誰？有哪些替代方案？</dd>
+        </dl>
+      </div>
+      <div class="side">
+        <h3>如果要用 AI 回答，你會怎麼部署？</h3>
+        <div class="choices" role="radiogroup" aria-label="部署方式">
+          <button class="opt" role="radio" aria-checked="false" data-k="local" id="opt-local"><span class="dot"></span><span class="t">全部地端</span><span class="s">模型與資料都留在公司內</span></button>
+          <button class="opt" role="radio" aria-checked="false" data-k="cloud" id="opt-cloud"><span class="dot"></span><span class="t">全部雲端</span><span class="s">資料上傳，全交給雲端 API</span></button>
+          <button class="opt" role="radio" aria-checked="false" data-k="hybrid" id="opt-hybrid"><span class="dot"></span><span class="t">混合式</span><span class="s">地端處理現場資料，雲端負責推理</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 找出問題 ============ -->
+<section class="panel" id="t3" role="tabpanel" aria-labelledby="b3" hidden>
+  <div class="wrap" id="t3wrap" data-k="hybrid">
+    <div class="head-row">
+      <div class="head">
+        <div class="eyebrow">情境題分析｜方案檢視</div>
+        <h2 id="t3title">選擇<span class="pick">混合式</span>：要特別注意這六個面向</h2>
+      </div>
+      <div class="seg" role="group" aria-label="切換部署方式">
+        <button data-k="local" aria-pressed="false" id="seg-local">全部地端</button>
+        <button data-k="cloud" aria-pressed="false" id="seg-cloud">全部雲端</button>
+        <button data-k="hybrid" aria-pressed="true" id="seg-hybrid">混合式</button>
+      </div>
+    </div>
+    <div class="v1" id="v1flow" aria-label="方案架構流程"></div>
+    <div class="probs" id="probs"></div>
+  </div>
+</section>
+
+<!-- ============ 4 修正方案 ============ -->
+<section class="panel" id="t4" role="tabpanel" aria-labelledby="b4" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">情境題分析｜修正版：插單評估流程</div>
+      <h2>數字來自演算法，判斷與表達來自 LLM</h2>
+    </div>
+    <div class="steps">
+      <div class="step l"><div class="top"><span class="no">01</span><span class="chip c-local">地端 LLM</span></div><h3>解析插單請求</h3><p class="muted">業務訊息 → 數量、交期、客戶代號</p></div>
+      <div class="step c"><div class="top"><span class="no">02</span><span class="chip c-cloud">雲端 LLM</span></div><h3>轉譯插單需求</h3><p class="muted">業務需求 → 限制條件與最佳化目標</p></div>
+      <div class="step l"><div class="top"><span class="no">03</span><span class="chip c-local">地端最佳化模型</span></div><h3>依最佳化條件提出情境方案</h3><ul class="pts"><li>考量客戶優先度</li><li>考量最短生產時間</li><li>考量排程調整影響最小</li><li>考量現場人員換線手順</li></ul></div>
+      <div class="step l"><div class="top"><span class="no">04</span><span class="chip c-local">地端規則引擎</span></div><h3>計算影響指標</h3><p class="muted">延遲訂單、換線次數、加班工時、物料缺口</p></div>
+      <div class="step c"><div class="top"><span class="no">05</span><span class="chip c-cloud">雲端 LLM</span></div><h3>彙整評估清單</h3><p class="muted">比較各情境方案的取捨、風險，提出建議</p></div>
+      <div class="step"><div class="top"><span class="no">06</span><span class="chip c-human">人</span></div><h3>生管與業務確認</h3><p class="muted">決策權留在人，確認後回寫 MES</p></div>
+    </div>
+    <div class="boundary">
+      <span class="k">資料邊界</span><span>上雲的只有<b>代碼化</b>的方案比較與彙總指標，原始訂單與客戶資料留在地端</span>
+      <span class="k">LLM 角色</span><span>協調者：透過工具呼叫驅動演算法，而不是取代演算法</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 雲端 ============ -->
+<section class="panel t-cloud" id="t5" role="tabpanel" aria-labelledby="b5" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">部署方式｜雲端 API</div>
+      <h2><span class="hl">雲端</span>：最強的腦，但要想清楚資料去哪</h2>
+    </div>
+    <div class="quad">
+      <div>
+        <h3>優點</h3>
+        <ul class="pts">
+          <li>能力最強：長上下文、多步驟推理、工具呼叫</li>
+          <li>上線快：不用買硬體、不用維運</li>
+          <li>按用量付費，模型持續升級</li>
+        </ul>
+      </div>
+      <div>
+        <h3>缺點與限制</h3>
+        <ul class="pts">
+          <li>資料離開公司，需靠合約與設定控管</li>
+          <li>用量大時長期成本高、費用難預估</li>
+          <li>依賴網路與供應商，改版會影響輸出</li>
+        </ul>
+      </div>
+      <div>
+        <h3>適合場景</h3>
+        <ul class="pts">
+          <li>複雜推理與規劃、文件撰寫與彙整</li>
+          <li>不敏感或已去識別化的資料</li>
+          <li>PoC 驗證、用量還不確定的初期</li>
+        </ul>
+      </div>
+      <div>
+        <h3>評估事項</h3>
+        <ul class="pts">
+          <li>資料條款：是否用於訓練、保留多久、可否指定區域</li>
+          <li>成本試算：<span class="formula">月 token 量 × 單價</span></li>
+          <li>速率限制、SLA、斷網時的備援</li>
+          <li>保留切換模型的介面，避免綁定單一廠商</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 地端 ============ -->
+<section class="panel t-local" id="t6" role="tabpanel" aria-labelledby="b6" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">部署方式｜地端部署</div>
+      <h2><span class="hl">地端</span>：資料不出廠，但能力有天花板</h2>
+    </div>
+    <div class="quad">
+      <div>
+        <h3>優點</h3>
+        <ul class="pts">
+          <li>資料不出廠，符合法規與客戶要求</li>
+          <li>成本可預期，用量越大越划算</li>
+          <li>可離線運作，可針對領域微調</li>
+        </ul>
+      </div>
+      <div>
+        <h3>缺點與限制</h3>
+        <ul class="pts">
+          <li>硬體門檻：顯示卡記憶體決定模型大小</li>
+          <li>開源中小模型的複雜推理明顯較弱</li>
+          <li>需要維運人力：更新、監控、資安</li>
+        </ul>
+      </div>
+      <div>
+        <h3>適合場景</h3>
+        <ul class="pts">
+          <li>機敏資料的分類、抽取、摘要、問答</li>
+          <li>高頻、格式固定的小任務</li>
+          <li>產線離線或網路受限的環境</li>
+        </ul>
+      </div>
+      <div>
+        <h3>評估事項</h3>
+        <ul class="pts">
+          <li>記憶體估算：<span class="formula">參數量 × 每參數 bytes + KV cache</span></li>
+          <li>例：32B 模型 Q4 量化，權重約 18–20 GB</li>
+          <li>授權條款：能否商用</li>
+          <li>地端不等於安全：權限控管與稽核一樣要做</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 混合式 ============ -->
+<section class="panel t-hybrid" id="t7" role="tabpanel" aria-labelledby="b7" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">部署方式｜混合式架構</div>
+      <h2><span class="hl">混合式</span>：依資料與任務分流，不是兩邊都用</h2>
+    </div>
+    <div class="patterns">
+      <div class="pat">
+        <h3>模式 A　雲端當大腦，地端當手腳</h3>
+        <ol class="lanes"><li class="chip c-cloud">雲端</li><li>只看 schema 與任務描述，不碰原始資料</li><li class="chip c-cloud">雲端</li><li>產出執行計畫、SQL、限制式</li><li class="chip c-local">地端</li><li>在真實資料上執行，結果留在公司內</li></ol>
+        <p class="eg"><b>例：</b>ERP 成本分析、插單評估與排程</p>
+      </div>
+      <div class="pat">
+        <h3>模式 B　地端當守門員</h3>
+        <ol class="lanes"><li class="chip c-local">地端</li><li>資料分級、遮罩、去識別化</li><li class="chip c-cloud">雲端</li><li>對處理過的內容做推理與彙整</li><li class="chip c-local">地端</li><li>把代碼還原成真實名稱與數字</li></ol>
+        <p class="eg"><b>例：</b>客訴分析、合約與報告摘要</p>
+      </div>
+    </div>
+    <div class="tri">
+      <div>
+        <h3>適合場景</h3>
+        <ul class="pts">
+          <li>同時有機敏資料與複雜任務</li>
+          <li>大多數製造業都落在這裡</li>
+        </ul>
+      </div>
+      <div>
+        <h3>代價</h3>
+        <ul class="pts">
+          <li>兩套系統都要維運</li>
+          <li>路由邏輯與資料邊界要設計</li>
+        </ul>
+      </div>
+      <div>
+        <h3>評估事項</h3>
+        <ul class="pts">
+          <li>哪些欄位可以上雲，要先劃清</li>
+          <li>斷網時地端能否降級運作</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 選型矩陣 ============ -->
+<section class="panel" id="t8" role="tabpanel" aria-labelledby="b8" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">總結｜選型矩陣</div>
+      <h2>每個 use case 落在不同格子，整體架構自然是混合的</h2>
+    </div>
+    <div class="mx-wrap">
+      <div class="mx" role="table" aria-label="資料敏感度與任務複雜度矩陣">
+        <div></div>
+        <div class="ax col">任務簡單</div>
+        <div class="ax col">任務複雜</div>
+        <div class="ax row">資料不敏感</div>
+        <div class="cell any"><span class="d">都可以</span><span class="muted">看成本決定</span></div>
+        <div class="cell cloud"><span class="d">雲端</span><span class="muted">發揮大模型推理能力</span></div>
+        <div class="ax row">資料敏感</div>
+        <div class="cell local"><span class="d">地端</span><span class="muted">小模型就能處理</span></div>
+        <div class="cell hybrid"><span class="d">混合式</span><span class="muted">用模式 A／B 拆開處理</span></div>
+      </div>
+      <div class="take">
+        <div>
+          <h3>中小企業的務實路徑</h3>
+          <p>先用雲端並簽好資料條款，驗證價值；再把高頻或機敏的任務逐步移到地端。</p>
+        </div>
+        <div>
+          <h3>混合式要先回答</h3>
+          <p>資料邊界劃在哪？誰決定任務走哪邊？</p>
+        </div>
+        <div class="again">
+          <h3>回到情境題</h3>
+          <p>再選一次：插單評估，你現在會怎麼部署？</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 模型 ============ -->
+<section class="panel" id="m1" role="tabpanel" aria-labelledby="bm1" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜評測指標</div>
+      <h2>新模型發表時，都用 benchmark 證明自己</h2>
+      <p class="lead">以 GPT-6 Astra 為例，官網依<b>電腦操作、專業工作、程式、學術、資安、長上下文</b>等類別公布評測成績。</p>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>類別</th><th>Benchmark</th><th>測什麼</th><th class="num">GPT-6 Astra</th><th class="num">前代 GPT-5.6 Sol</th></tr></thead>
+      <tbody><tr><td class="cat">電腦操作</td><td class="nm">OSWorld 2.0</td><td>在真實作業系統中操作軟體完成任務</td><td class="num hi">72.6%</td><td class="num">65.7%</td></tr><tr><td class="cat">專業工作</td><td class="nm">AutomationBench</td><td>跨多套商用系統的業務流程自動化</td><td class="num hi">41.4%</td><td class="num">18.1%</td></tr><tr><td class="cat">程式</td><td class="nm">Terminal-Bench 4.0</td><td>在終端機完成工程、系統設定、資料分析</td><td class="num hi">57.9%</td><td class="num">37.3%</td></tr><tr><td class="cat">程式</td><td class="nm">DeepSWE v1.1</td><td>原創、長時程的軟體工程任務</td><td class="num hi">74.1%</td><td class="num">72.7%</td></tr><tr><td class="cat">學術推理</td><td class="nm">GPQA Diamond</td><td>研究所程度的生物、化學、物理問題</td><td class="num hi">96.0%</td><td class="num">94.6%</td></tr><tr><td class="cat">抽象推理</td><td class="nm">ARC-AGI-3</td><td>陌生的互動式解謎，測臨場學會新規則</td><td class="num hi">99.9%</td><td class="num">7.8%</td></tr><tr><td class="cat">長上下文</td><td class="nm">MRCR v2（512K–1M）</td><td>在超長文件中找回多個分散的資訊</td><td class="num hi">96.3%</td><td class="num">73.8%</td></tr><tr><td class="cat">可靠度</td><td class="nm">內部幻覺測試</td><td>回答出現錯誤事實的比例（越低越好）</td><td class="num hi">4.2%</td><td class="num">12.2%</td></tr></tbody>
+    </table></div>
+    <p class="note">官網列出 30 多項評測，此處挑 8 項代表；分數皆為 OpenAI 官網公布</p>
+  </div>
+</section>
+<section class="panel" id="m2" role="tabpanel" aria-labelledby="bm2" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜讀懂分數</div>
+      <h2>看分數之前，先問四個問題</h2>
+    </div>
+    <div class="checks">
+      <div><h3>跟誰比？</h3><p>多數項目比的是自家前代，跨廠商只挑部分項目</p><span class="eg-line">Agents' Last Exam：對比 Claude Opus 5</span></div>
+      <div><h3>在什麼條件下？</h3><p>推理強度、評測版本、是否只跑子集，都會影響分數</p><span class="eg-line">OSWorld 2.0：offline set, partial score</span></div>
+      <div><h3>差距有意義嗎？</h3><p>接近滿分的評測已經飽和，差 1 分看不出差別；大幅跳升才是質變</p><span class="eg-line">ARC-AGI-1　97.5% → 98.5%｜ARC-AGI-3　7.8% → 99.9%</span></div>
+      <div><h3>能被驗證嗎？</h3><p>標示「Internal」的是廠商內部測試，外部無法重現</p><span class="eg-line">內部幻覺測試、內部資料科學任務</span></div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="m3" role="tabpanel" aria-labelledby="bm3" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜回到問題</div>
+      <h2>Benchmark 是參考，選哪個、換不換，回到要解決的問題</h2>
+    </div>
+    <div class="back">
+      <div>
+        <h3>選型流程</h3>
+        <ol class="ladder">
+          <li class="key">定義業務問題與成功標準</li>
+          <li>用 benchmark 篩出候選模型</li>
+          <li class="key">用自己的資料建立評測集</li>
+          <li>實測品質、每任務成本、回應時間</li>
+          <li>決定導入，或維持現狀</li>
+        </ol>
+      </div>
+      <div>
+        <h3>新模型出來，要不要換？</h3>
+        <ul class="pts">
+          <li>現行模型已經達標了嗎？</li>
+          <li>在自己的評測集上，真的有進步嗎？</li>
+          <li>每任務成本與回應時間怎麼變？</li>
+          <li>遷移成本：prompt 調整、輸出格式、回歸測試</li>
+        </ul>
+      </div>
+    </div>
+    <div class="thesis"><p>合約審閱不需要 FrontierMath 滿分，產線排查也不需要 ARC-AGI-3 滿分</p></div>
+  </div>
+</section>
+<section class="panel" id="m4" role="tabpanel" aria-labelledby="bm4" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜選型思維</div>
+      <h2>地端看規格，雲端看任務</h2>
+    </div>
+    <div class="shift">
+      <div><h3><span class="chip c-local">地端</span>先問：跑不跑得動？</h3>
+        <ul class="pts t-local"><li>參數量、量化等級</li><li>記憶體與硬體門檻</li><li>授權條款能否商用</li></ul></div>
+      <div><h3><span class="chip c-cloud">雲端</span>先問：任務需要多強？</h3>
+        <ul class="pts t-cloud"><li>任務複雜度</li><li>推理型態：想得深，還是做得久</li><li>每任務成本與資料條款</li></ul></div>
+    </div>
+    <div class="axes">
+      <div><h3>思考深度</h3><p>單次回答前想多久</p><p class="muted">推理強度可調，同一型號能設低也能設高</p></div>
+      <div><h3>長時程任務</h3><p>自主呼叫工具、跨多個資料來源、連續多步完成</p><p class="muted">也就是 agent，考驗規劃與持續執行</p></div>
+    </div>
+    <div class="thesis"><p>選型 = 型號 × 推理強度</p><span>成本用「每個任務」計算，不只看每百萬 token 單價</span></div>
+  </div>
+</section>
+<section class="panel" id="m5" role="tabpanel" aria-labelledby="bm5" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜GPT-6 型號</div>
+      <h2>GPT-6 三種規格，各自對應不同難度的任務</h2>
+    </div>
+    <div class="tiers">
+      <div class="tier top"><span class="lvl">頂級</span><h3>Astra</h3><p>困難、多限制的複雜專案與長時程 agent</p><p class="muted">例：跨系統自動化、深度研究</p><span class="price">$10 / $50</span></div>
+      <div class="tier"><span class="lvl">主力</span><h3>Sol</h3><p>需要判斷力的撰寫、分析、程式修改</p><p class="muted">例：報告撰寫、文件比對</p><span class="price">$2 / $10</span></div>
+      <div class="tier"><span class="lvl">輕量</span><h3>Luna</h3><p>規則明確、大量重複的任務</p><p class="muted">例：資訊抽取、分類、結構化摘要</p><span class="price">$0.10 / $0.50</span></div>
+    </div>
+    <div class="insight">
+      <span class="k">價格</span><span>每百萬 token，輸入 / 輸出；三者 context 皆約 1M</span>
+      <span class="k">觀察</span><span>DeepSWE v1.1（max 推理強度）：Sol 68.8%、Luna 66.6%，價格差 20 倍，分數只差 2.2 分</span>
+      <span class="k">每任務</span><span>Sol 在 AutomationBench（xhigh）約 $0.27 完成一個任務</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="m6" role="tabpanel" aria-labelledby="bm6" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜跨廠對照</div>
+      <h2>各家分級邏輯一致，學會對應就能帶著走</h2>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>級距</th><th>OpenAI GPT-6</th><th class="num">價格</th><th>Anthropic Claude</th><th class="num">價格</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">頂級</td><td>Astra</td><td class="num">$10 / $50</td><td>Fable 5.1</td><td class="num">$10 / $50</td><td>1M</td></tr>
+        <tr><td class="nm" rowspan="2">主力</td><td rowspan="2">Sol</td><td class="num" rowspan="2">$2 / $10</td><td>Opus 5.5　<span class="chip c-accent">官方建議起點</span></td><td class="num">$4 / $20</td><td>1M</td></tr>
+        <tr><td>Sonnet 5</td><td class="num">$2 / $10</td><td>1M</td></tr>
+        <tr><td class="nm">輕量</td><td>Luna</td><td class="num">$0.10 / $0.50</td><td>Haiku 4.5</td><td class="num">$1 / $5</td><td>200K</td></tr>
+      </tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">價格</span><span>每百萬 token，輸入 / 輸出，2026 年 9 月官網資訊</span>
+      <span class="k">留意</span><span>同級距不代表能力相同，最後仍要用自己的任務實測</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="m7" role="tabpanel" aria-labelledby="bm7" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜情境一</div>
+      <h2>合約報告書審閱</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>任務類型：文件審閱</span></div>
+        <blockquote>「幫我 review 這份合約，找出錯字、誤植、文法不通順，以及內容有誤的地方。」</blockquote>
+        <dl class="facts"><dt>輸入</dt><dd>一份含附件的完整合約報告書</dd><dt>要找的</dt><dd>錯字、誤植、文法、內容錯誤</dd><dt>輸出</dt><dd>問題清單與修改建議</dd><dt>使用者</dt><dd>法務與業務人員</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一個 Claude 型號？</h3>
+        <div class="choices mopts" role="radiogroup" aria-label="合約報告書審閱的型號選擇" data-group="sc1"><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc1-0"><span class="dot"></span><span class="t">Fable 5.1</span><span class="s">頂級</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc1-1"><span class="dot"></span><span class="t">Opus 5.5</span><span class="s">主力</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc1-2"><span class="dot"></span><span class="t">Sonnet 5</span><span class="s">主力</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc1-3"><span class="dot"></span><span class="t">Haiku 4.5</span><span class="s">輕量</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="m8" role="tabpanel" aria-labelledby="bm8" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜情境二</div>
+      <h2>工廠現場異常排除 agent</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>任務類型：異常診斷 agent</span></div>
+        <blockquote>「產線發生異常，請找出可能原因，並提出確認排查的步驟。」</blockquote>
+        <dl class="facts"><dt>可讀取</dt><dd>IoT 感測數據、MES、製造指示卡</dd><dt>要做的</dt><dd>自行統整、推敲、歸納可能原因</dd><dt>輸出</dt><dd>異常原因與排查步驟</dd><dt>使用者</dt><dd>現場工程師</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一個 Claude 型號？</h3>
+        <div class="choices mopts" role="radiogroup" aria-label="工廠現場異常排除 agent的型號選擇" data-group="sc2"><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc2-0"><span class="dot"></span><span class="t">Fable 5.1</span><span class="s">頂級</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc2-1"><span class="dot"></span><span class="t">Opus 5.5</span><span class="s">主力</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc2-2"><span class="dot"></span><span class="t">Sonnet 5</span><span class="s">主力</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="sc2-3"><span class="dot"></span><span class="t">Haiku 4.5</span><span class="s">輕量</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="m9" role="tabpanel" aria-labelledby="bm9" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜解析</div>
+      <h2>兩個情境，兩種推理型態</h2>
+    </div>
+    <div class="ans2">
+      <div>
+        <h3>情境一：合約審閱</h3>
+        <dl class="kv">
+          <dt>推理型態</dt><dd>思考深度</dd>
+          <dt>錯字、文法</dt><dd>規則明確 → <b>Sonnet 5</b>，甚至 Haiku 4.5</dd>
+          <dt>內容有誤</dt><dd>跨段落比對金額、日期、條款 → <b>Opus 5.5</b></dd>
+          <dt>陷阱</dt><dd>文件很長時，Haiku 4.5 的 200K context 可能放不下</dd>
+          <dt>重點</dt><dd>一個需求可以拆成兩種難度，分派不同型號</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>情境二：現場異常排除</h3>
+        <dl class="kv">
+          <dt>推理型態</dt><dd>長時程任務（agent）</dd>
+          <dt>建議</dt><dd>跨三個來源自主推敲 → <b>Opus 5.5</b></dd>
+          <dt>升級時機</dt><dd>實測準確度不足，才換 <b>Fable 5.1</b></dd>
+          <dt>回應速度</dt><dd>第一線用 Haiku 4.5 快速分類，複雜案例再轉 Opus</dd>
+          <dt>資料邊界</dt><dd>IoT、MES 資料能否上雲？回到混合式架構</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 地端模型 ============ -->
+<section class="panel" id="l1" role="tabpanel" aria-labelledby="bl1" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>開源模型，到 Hugging Face 找</h2>
+    </div>
+    <div class="hf">
+      <div class="hf-card">
+        <div class="hf-brand"><svg  class="hf-ico" aria-hidden="true" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg"><path d="M2.25 11.535c0-3.407 1.847-6.554 4.844-8.258a9.822 9.822 0 019.687 0c2.997 1.704 4.844 4.851 4.844 8.258 0 5.266-4.337 9.535-9.687 9.535S2.25 16.8 2.25 11.535z" fill="#FF9D0B"></path><path d="M11.938 20.086c4.797 0 8.687-3.829 8.687-8.551 0-4.722-3.89-8.55-8.687-8.55-4.798 0-8.688 3.828-8.688 8.55 0 4.722 3.89 8.55 8.688 8.55z" fill="#FFD21E"></path><path d="M11.875 15.113c2.457 0 3.25-2.156 3.25-3.263 0-.576-.393-.394-1.023-.089-.582.283-1.365.675-2.224.675-1.798 0-3.25-1.693-3.25-.586 0 1.107.79 3.263 3.25 3.263h-.003z" fill="#FF323D"></path><path d="M14.76 9.21c.32.108.445.753.767.585.447-.233.707-.708.659-1.204a1.235 1.235 0 00-.879-1.059 1.262 1.262 0 00-1.33.394c-.322.384-.377.92-.14 1.36.153.283.638-.177.925-.079l-.002.003zm-5.887 0c-.32.108-.448.753-.768.585a1.226 1.226 0 01-.658-1.204c.048-.495.395-.913.878-1.059a1.262 1.262 0 011.33.394c.322.384.377.92.14 1.36-.152.283-.64-.177-.925-.079l.003.003zm1.12 5.34a2.166 2.166 0 011.325-1.106c.07-.02.144.06.219.171l.192.306c.069.1.139.175.209.175.074 0 .15-.074.223-.172l.205-.302c.08-.11.157-.188.234-.165.537.168.986.536 1.25 1.026.932-.724 1.275-1.905 1.275-2.633 0-.508-.306-.426-.81-.19l-.616.296c-.52.24-1.148.48-1.824.48-.676 0-1.302-.24-1.823-.48l-.589-.283c-.52-.248-.838-.342-.838.177 0 .703.32 1.831 1.187 2.56l.18.14z" fill="#3A3B45"></path><path d="M17.812 10.366a.806.806 0 00.813-.8c0-.441-.364-.8-.813-.8a.806.806 0 00-.812.8c0 .442.364.8.812.8zm-11.624 0a.806.806 0 00.812-.8c0-.441-.364-.8-.812-.8a.806.806 0 00-.813.8c0 .442.364.8.813.8zM4.515 13.073c-.405 0-.765.162-1.017.46a1.455 1.455 0 00-.333.925 1.801 1.801 0 00-.485-.074c-.387 0-.737.146-.985.409a1.41 1.41 0 00-.2 1.722 1.302 1.302 0 00-.447.694c-.06.222-.12.69.2 1.166a1.267 1.267 0 00-.093 1.236c.238.533.81.958 1.89 1.405l.24.096c.768.3 1.473.492 1.478.494.89.243 1.808.375 2.732.394 1.465 0 2.513-.443 3.115-1.314.93-1.342.842-2.575-.274-3.763l-.151-.154c-.692-.684-1.155-1.69-1.25-1.912-.195-.655-.71-1.383-1.562-1.383-.46.007-.889.233-1.15.605-.25-.31-.495-.553-.715-.694a1.87 1.87 0 00-.993-.312zm14.97 0c.405 0 .767.162 1.017.46.216.262.333.588.333.925.158-.047.322-.071.487-.074.388 0 .738.146.985.409a1.41 1.41 0 01.2 1.722c.22.178.377.422.445.694.06.222.12.69-.2 1.166.244.37.279.836.093 1.236-.238.533-.81.958-1.889 1.405l-.239.096c-.77.3-1.475.492-1.48.494-.89.243-1.808.375-2.732.394-1.465 0-2.513-.443-3.115-1.314-.93-1.342-.842-2.575.274-3.763l.151-.154c.695-.684 1.157-1.69 1.252-1.912.195-.655.708-1.383 1.56-1.383.46.007.889.233 1.15.605.25-.31.495-.553.718-.694.244-.162.523-.265.814-.3l.176-.012z" fill="#FF9D0B"></path><path d="M9.785 20.132c.688-.994.638-1.74-.305-2.667-.945-.928-1.495-2.288-1.495-2.288s-.205-.788-.672-.714c-.468.074-.81 1.25.17 1.971.977.721-.195 1.21-.573.534-.375-.677-1.405-2.416-1.94-2.751-.532-.332-.907-.148-.782.541.125.687 2.357 2.35 2.14 2.707-.218.362-.983-.42-.983-.42S2.953 14.9 2.43 15.46c-.52.558.398 1.026 1.7 1.803 1.308.778 1.41.985 1.225 1.28-.187.295-3.07-2.1-3.34-1.083-.27 1.011 2.943 1.304 2.745 2.006-.2.7-2.265-1.324-2.685-.537-.425.79 2.913 1.718 2.94 1.725 1.075.276 3.813.859 4.77-.522zm4.432 0c-.687-.994-.64-1.74.305-2.667.943-.928 1.493-2.288 1.493-2.288s.205-.788.675-.714c.465.074.807 1.25-.17 1.971-.98.721.195 1.21.57.534.377-.677 1.407-2.416 1.94-2.751.532-.332.91-.148.782.541-.125.687-2.355 2.35-2.137 2.707.215.362.98-.42.98-.42S21.05 14.9 21.57 15.46c.52.558-.395 1.026-1.7 1.803-1.308.778-1.408.985-1.225 1.28.187.295 3.07-2.1 3.34-1.083.27 1.011-2.94 1.304-2.743 2.006.2.7 2.263-1.324 2.685-.537.423.79-2.912 1.718-2.94 1.725-1.077.276-3.815.859-4.77-.522z" fill="#FFD21E"></path></svg><svg fill="currentColor" fill-rule="evenodd"  class="hf-txt" aria-hidden="true" viewBox="0 0 153 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 18.578V1.824h3.767v6.45h5.765v-6.45h3.792v16.754h-3.792v-6.99H5.767v6.99H2zm20.78.309c-1.383 0-2.387-.459-3.01-1.375-.624-.917-.935-2.172-.935-3.765V5.833H22.6v7.426c0 .925.128 1.559.385 1.902.256.342.657.514 1.204.514.461 0 .863-.112 1.204-.335.342-.222.692-.582 1.05-1.079V5.833h3.767v12.745h-3.074l-.282-1.773h-.077a6.852 6.852 0 01-1.743 1.516c-.632.377-1.383.566-2.254.566zM38.053 24c-.99 0-1.892-.116-2.703-.347-.812-.231-1.452-.582-1.922-1.053-.47-.472-.705-1.084-.705-1.838 0-.53.158-1.01.474-1.439.316-.428.765-.805 1.346-1.13v-.103a3.077 3.077 0 01-.833-.86c-.23-.352-.346-.785-.346-1.299 0-.462.137-.903.41-1.323.273-.42.615-.775 1.025-1.066v-.103c-.461-.308-.863-.754-1.204-1.336-.342-.583-.513-1.242-.513-1.979 0-1.01.248-1.858.743-2.544a4.561 4.561 0 011.948-1.541 6.46 6.46 0 012.562-.514 6.8 6.8 0 011.038.077c.333.051.645.128.935.231h4.638v2.75h-2.127v.102c.17.223.299.467.384.733.086.265.129.56.129.886 0 .96-.223 1.752-.667 2.377-.444.625-1.046 1.092-1.806 1.4-.76.309-1.602.463-2.524.463-.222 0-.461-.022-.717-.064a6.978 6.978 0 01-.82-.193 1.64 1.64 0 00-.346.411c-.077.137-.116.317-.116.54 0 .308.146.544.436.706.29.163.786.244 1.486.244h2.05c1.572 0 2.772.253 3.6.758.829.506 1.243 1.332 1.243 2.48 0 .874-.29 1.658-.871 2.351-.581.694-1.401 1.238-2.46 1.632-1.06.394-2.315.591-3.767.591zm.282-11.743c.342 0 .64-.081.897-.244.256-.163.461-.398.615-.707.153-.308.23-.702.23-1.182 0-.685-.166-1.199-.5-1.542a1.663 1.663 0 00-1.242-.513c-.495 0-.91.17-1.243.513-.333.343-.5.857-.5 1.542 0 .48.082.874.244 1.182.162.309.372.544.628.707.256.163.546.244.871.244zm.307 9.379c.564 0 1.064-.069 1.5-.206.435-.137.78-.325 1.037-.565.256-.24.385-.505.385-.796 0-.412-.171-.681-.513-.81-.342-.128-.82-.193-1.435-.193h-1.307l-.49-.006-.31-.013a5.681 5.681 0 01-.993-.135c-.24.206-.415.407-.526.604a1.311 1.311 0 00-.166.655c0 .48.26.844.781 1.092.521.249 1.2.373 2.037.373zM51.735 24c-.99 0-1.892-.116-2.703-.347-.812-.231-1.452-.582-1.922-1.053-.47-.472-.705-1.084-.705-1.838 0-.53.158-1.01.474-1.439.316-.428.765-.805 1.346-1.13v-.103a3.077 3.077 0 01-.833-.86c-.23-.352-.346-.785-.346-1.299 0-.462.137-.903.41-1.323.273-.42.615-.775 1.025-1.066v-.103c-.461-.308-.863-.754-1.204-1.336-.342-.583-.513-1.242-.513-1.979 0-1.01.248-1.858.743-2.544a4.561 4.561 0 011.948-1.541 6.46 6.46 0 012.562-.514 6.8 6.8 0 011.038.077c.333.051.644.128.935.231h4.638v2.75H56.5v.102c.17.223.299.467.384.733.086.265.128.56.128.886 0 .96-.222 1.752-.666 2.377-.444.625-1.046 1.092-1.806 1.4-.76.309-1.602.463-2.524.463-.222 0-.461-.022-.718-.064a6.978 6.978 0 01-.82-.193 1.64 1.64 0 00-.345.411c-.077.137-.116.317-.116.54 0 .308.145.544.436.706.29.163.786.244 1.486.244h2.05c1.571 0 2.771.253 3.6.758.828.506 1.243 1.332 1.243 2.48 0 .874-.29 1.658-.872 2.351-.58.694-1.4 1.238-2.46 1.632-1.058.394-2.314.591-3.766.591zm.282-11.743c.341 0 .64-.081.897-.244.256-.163.46-.398.615-.707.153-.308.23-.702.23-1.182 0-.685-.166-1.199-.5-1.542a1.663 1.663 0 00-1.242-.513c-.496 0-.91.17-1.243.513-.333.343-.5.857-.5 1.542 0 .48.082.874.244 1.182.162.309.371.544.628.707.256.163.546.244.87.244zm.307 9.379c.564 0 1.064-.069 1.5-.206.435-.137.78-.325 1.037-.565.256-.24.384-.505.384-.796 0-.412-.17-.681-.512-.81-.342-.128-.82-.193-1.435-.193h-1.307l-.49-.006-.31-.013a5.681 5.681 0 01-.993-.135c-.24.206-.415.407-.526.604a1.311 1.311 0 00-.166.655c0 .48.26.844.781 1.092.521.249 1.2.373 2.037.373zm8.559-3.058V5.833h3.766v12.745h-3.766zm1.87-14.62c-.632 0-1.144-.18-1.537-.54-.393-.36-.59-.84-.59-1.44 0-.599.197-1.079.59-1.438.393-.36.905-.54 1.537-.54.632 0 1.145.18 1.537.54.393.36.59.839.59 1.439 0 .6-.197 1.079-.59 1.439-.392.36-.905.54-1.537.54zm5.202 14.62V5.833h3.074l.257 1.619h.102a8.268 8.268 0 011.794-1.362c.666-.377 1.426-.565 2.28-.565 1.401 0 2.409.458 3.024 1.374.615.917.922 2.172.922 3.765v7.914h-3.766v-7.426c0-.925-.124-1.559-.372-1.901-.248-.343-.645-.514-1.191-.514-.479 0-.889.107-1.23.32a7.203 7.203 0 00-1.128.913v8.608h-3.766zM87.147 24c-.991 0-1.892-.116-2.704-.347-.811-.231-1.452-.582-1.922-1.053-.47-.472-.704-1.084-.704-1.838 0-.53.158-1.01.474-1.439.316-.428.764-.805 1.345-1.13v-.103a3.077 3.077 0 01-.833-.86c-.23-.352-.346-.785-.346-1.299 0-.462.137-.903.41-1.323.274-.42.615-.775 1.025-1.066v-.103c-.46-.308-.862-.754-1.204-1.336-.342-.583-.512-1.242-.512-1.979 0-1.01.247-1.858.743-2.544a4.561 4.561 0 011.947-1.541 6.46 6.46 0 012.562-.514 6.8 6.8 0 011.038.077c.333.051.645.128.935.231h4.638v2.75h-2.127v.102c.171.223.3.467.385.733.085.265.128.56.128.886 0 .96-.222 1.752-.666 2.377-.444.625-1.047 1.092-1.807 1.4-.76.309-1.601.463-2.524.463-.222 0-.46-.022-.717-.064a6.978 6.978 0 01-.82-.193 1.64 1.64 0 00-.346.411c-.077.137-.115.317-.115.54 0 .308.145.544.435.706.29.163.786.244 1.487.244h2.05c1.57 0 2.771.253 3.6.758.828.506 1.242 1.332 1.242 2.48 0 .874-.29 1.658-.871 2.351-.58.694-1.4 1.238-2.46 1.632-1.059.394-2.314.591-3.766.591zm.281-11.743c.342 0 .641-.081.897-.244.256-.163.461-.398.615-.707.154-.308.23-.702.23-1.182 0-.685-.166-1.199-.499-1.542a1.663 1.663 0 00-1.243-.513c-.495 0-.91.17-1.242.513-.333.343-.5.857-.5 1.542 0 .48.081.874.243 1.182.163.309.372.544.628.707.256.163.547.244.871.244zm.308 9.379c.564 0 1.063-.069 1.499-.206.435-.137.781-.325 1.038-.565.256-.24.384-.505.384-.796 0-.412-.17-.681-.513-.81-.341-.128-.82-.193-1.434-.193h-1.307l-.49-.006-.311-.013a5.681 5.681 0 01-.993-.135c-.239.206-.414.407-.525.604a1.311 1.311 0 00-.167.655c0 .48.26.844.782 1.092.52.249 1.2.373 2.037.373zm13.99-3.058V1.824h10.531v3.187h-6.764v3.88h5.79v3.186h-5.79v6.501h-3.767zm16.322.309c-.768 0-1.439-.172-2.011-.514a3.49 3.49 0 01-1.32-1.388c-.307-.582-.46-1.233-.46-1.953 0-1.37.563-2.428 1.69-3.173 1.128-.746 2.947-1.247 5.458-1.504-.017-.376-.098-.698-.243-.963a1.474 1.474 0 00-.654-.617c-.29-.145-.657-.218-1.102-.218-.53 0-1.067.094-1.614.282a10.61 10.61 0 00-1.768.823l-1.332-2.467c.546-.343 1.11-.638 1.69-.887.582-.248 1.184-.44 1.807-.578a8.986 8.986 0 011.935-.205c1.093 0 2.011.21 2.754.63.743.419 1.311 1.053 1.704 1.9.393.849.59 1.932.59 3.251v7.272h-3.075l-.256-1.31h-.103a8.13 8.13 0 01-1.717 1.169 4.34 4.34 0 01-1.973.45zm1.256-2.956c.427 0 .803-.094 1.127-.282.325-.189.65-.446.974-.771v-2.159c-.888.12-1.593.275-2.114.463-.521.188-.888.415-1.102.681a1.38 1.38 0 00-.32.886c0 .394.132.69.397.887.265.197.61.295 1.038.295zm14.656 2.956c-1.195 0-2.276-.266-3.24-.797a5.751 5.751 0 01-2.281-2.287c-.556-.994-.833-2.193-.833-3.597 0-1.405.307-2.604.922-3.598a6.248 6.248 0 012.435-2.287 6.877 6.877 0 013.254-.796c.785 0 1.49.124 2.114.372a5.115 5.115 0 011.601.99l-1.768 2.338a2.936 2.936 0 00-.756-.463 2.434 2.434 0 00-.96-.18c-.599 0-1.12.146-1.564.437-.444.291-.794.711-1.05 1.26-.257.548-.385 1.19-.385 1.927 0 .736.128 1.379.385 1.927.256.548.602.968 1.037 1.259.436.291.927.437 1.474.437.427 0 .828-.077 1.204-.232a4.873 4.873 0 001.05-.59l1.487 2.312c-.53.48-1.153.86-1.87 1.144a6.096 6.096 0 01-2.256.424zm11.633-13.362c1.213 0 2.221.27 3.024.809.803.54 1.4 1.272 1.794 2.197.393.925.589 1.962.589 3.11 0 .325-.017.646-.051.963l-.041.35c-.02.159-.041.295-.062.408h-7.596c.087.432.224.8.409 1.105.333.548.756.938 1.268 1.169a3.88 3.88 0 001.615.347c.495 0 .969-.073 1.422-.219a6.914 6.914 0 001.345-.603l1.23 2.312a7.613 7.613 0 01-2.153 1.04 7.951 7.951 0 01-2.357.374c-1.213 0-2.306-.266-3.28-.797a5.813 5.813 0 01-2.306-2.287c-.564-.994-.845-2.193-.845-3.597 0-1.388.286-2.579.858-3.572.572-.994 1.32-1.76 2.242-2.3.922-.54 1.888-.81 2.895-.81zm.077 2.903c-.41 0-.811.112-1.204.334-.393.223-.717.608-.974 1.157-.11.236-.196.513-.255.83h2.23l2.304-.008c0-.668-.162-1.22-.486-1.657-.325-.437-.863-.656-1.615-.656z"></path></svg></div>
+        <p>全球最大的開源模型平台，可依任務、參數量、授權、語言篩選模型</p>
+        <a class="linkbtn" href="https://huggingface.co/models" target="_blank" rel="noopener">huggingface.co/models ↗</a>
+        <div class="ow"><b>開放權重 ≠ 完全開源</b>
+          <span><span class="chip c-local">開放權重</span> 可下載、可部署；訓練資料與程式碼不公開</span>
+          <span><span class="chip c-accent">完全開源</span> 權重、資料、訓練程式碼全公開，可重現、可稽核</span></div>
+      </div>
+      <div class="look">
+        <h3>打開一個模型頁，先看這五件事</h3>
+        <dl class="kv">
+          <dt>Model Card</dt><dd>開發者、參數量、訓練方式、評測成績</dd>
+          <dt>License</dt><dd>授權標籤：能不能商用、有什麼條件</dd>
+          <dt>Files</dt><dd>有沒有官方量化版本，例如 GGUF</dd>
+          <dt>社群熱度</dt><dd>下載數、按讚數，反映實際採用程度</dd>
+          <dt>更新時間</dt><dd>是否仍在維護，有沒有更新的版本</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l2" role="tabpanel" aria-labelledby="bl2" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>開發者與國家：先知道模型從哪裡來</h2>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>模型家族</th><th>開發企業</th><th>國家</th><th>代表尺寸</th><th>授權</th></tr></thead>
+      <tbody><tr><td class="nm">Gemma 4</td><td>Google</td><td>美國</td><td>E2B、E4B、12B、26B A4B、31B</td><td>Apache 2.0</td></tr><tr><td class="nm">gpt-oss</td><td>OpenAI</td><td>美國</td><td>20B、120B</td><td>Apache 2.0</td></tr><tr><td class="nm">Llama 4</td><td>Meta</td><td>美國</td><td>Scout、Maverick</td><td>Llama 社群授權</td></tr><tr><td class="nm">Nemotron</td><td>NVIDIA</td><td>美國</td><td>多種尺寸</td><td>NVIDIA 開放模型授權</td></tr><tr><td class="nm">Qwen 3.8</td><td>阿里巴巴</td><td>中國</td><td>27B、2.4T A95B</td><td>Apache 2.0</td></tr><tr><td class="nm">DeepSeek V4</td><td>DeepSeek</td><td>中國</td><td>V4-Pro 1.6T（啟用 49B）</td><td>MIT</td></tr><tr><td class="nm">GLM-5.2</td><td>Z.ai（智譜）</td><td>中國</td><td>744B（啟用 40B）</td><td>MIT</td></tr><tr><td class="nm">Mistral Large 3</td><td>Mistral AI</td><td>法國</td><td>675B（啟用 41B）</td><td>Apache 2.0</td></tr><tr><td class="nm">TAIDE</td><td>國科會</td><td>台灣</td><td>以 Llama、Gemma 為基底</td><td>TAIDE 授權</td></tr></tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">為何要看</span><span>客戶或標案可能限制模型來源國；也影響繁中能力與長期維護</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l3" role="tabpanel" aria-labelledby="bl3" hidden>
+  <div class="wrap">
+    <div class="head-row">
+      <div class="head">
+        <div class="eyebrow">模型｜地端模型</div>
+        <h2>參數量與量化，決定記憶體、速度與品質</h2>
+      </div>
+      <div class="seg" role="group" aria-label="切換檢視">
+        <button aria-pressed="true" id="mv-calc" data-v="calc">互動試算</button>
+        <button aria-pressed="false" id="mv-gemma" data-v="gemma">Gemma 4 官方數據</button>
+      </div>
+    </div>
+    <div class="calc" id="calc">
+      <div class="ctl">
+        <div class="ctl-row"><span class="ctl-k">參數量</span>
+          <div class="chooser" role="radiogroup" aria-label="參數量" id="pk-p">
+            <button role="radio" data-v="4" aria-checked="false">4B</button><button role="radio" data-v="8" aria-checked="true">8B</button><button role="radio" data-v="14" aria-checked="false">14B</button><button role="radio" data-v="32" aria-checked="false">32B</button><button role="radio" data-v="70" aria-checked="false">70B</button>
+          </div></div>
+        <div class="ctl-row"><span class="ctl-k">量化</span>
+          <div class="chooser" role="radiogroup" aria-label="量化等級" id="pk-q">
+            <button role="radio" data-v="bf16" aria-checked="true">BF16</button><button role="radio" data-v="q8" aria-checked="false">8-bit</button><button role="radio" data-v="q4" aria-checked="false">4-bit</button>
+          </div></div>
+        <dl class="kv concept">
+          <dt>量化</dt><dd>每個參數 2 bytes（BF16）→ 約 1 byte（8-bit）→ 約 0.56 byte（4-bit）</dd>
+          <dt>MoE</dt><dd>記憶體看總參數，速度看啟用參數</dd>
+        </dl>
+      </div>
+      <div class="res" aria-live="polite">
+        <div class="meter"><div class="mh"><span class="mk">記憶體</span><span class="mv" id="o-mem"></span></div><div class="mbar"><i id="b-mem"></i></div><span class="ms" id="o-hw"></span></div>
+        <div class="meter"><div class="mh"><span class="mk">速度</span><span class="mv" id="o-spd"></span></div><div class="mbar"><i id="b-spd"></i></div><span class="ms">以頻寬約 1 TB/s 的單張顯卡理論估算</span></div>
+        <div class="meter"><div class="mh"><span class="mk">生成品質</span><span class="mv" id="o-q"></span></div><div class="mbar"><i id="b-q"></i></div><span class="ms" id="o-qn"></span></div>
+      </div>
+    </div>
+    <div class="gemma" id="gemma" hidden>
+      <div class="tblwrap"><table class="bt">
+        <thead><tr><th>型號</th><th class="num">BF16</th><th class="num">8-bit</th><th class="num">4-bit</th></tr></thead>
+        <tbody><tr><td class="nm">E2B</td><td class="num">11.4</td><td class="num">5.7</td><td class="num hi">2.9</td></tr><tr><td class="nm">E4B</td><td class="num">17.9</td><td class="num">8.9</td><td class="num hi">4.5</td></tr><tr><td class="nm">12B</td><td class="num">26.7</td><td class="num">13.4</td><td class="num hi">6.7</td></tr><tr><td class="nm">26B A4B</td><td class="num">57.7</td><td class="num">28.8</td><td class="num hi">14.4</td></tr><tr><td class="nm">31B</td><td class="num">69.9</td><td class="num">34.9</td><td class="num hi">17.5</td></tr></tbody>
+      </table></div>
+      <p class="note">單位 GB；官方數字為載入模型所需，context 越長，KV cache 另外越大</p>
+    </div>
+    <p class="note" id="calc-note">試算為教學示意：記憶體含約 10% 執行開銷、不含長 context 的 KV cache；品質為相對指標</p>
+  </div>
+</section>
+<section class="panel" id="l4" role="tabpanel" aria-labelledby="bl4" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>授權條款：能不能商用，差很多</h2>
+    </div>
+    <div class="tblwrap"><table class="bt lic">
+      <thead><tr><th>授權類型</th><th colspan="2">商用程度</th><th>主要條件</th><th>代表模型</th></tr></thead>
+      <tbody><tr><td class="nm">Apache 2.0</td><td class="lv"><span class="on">●</span><span class="on">●</span><span class="on">●</span></td><td class="nw">完全可商用</td><td>保留授權聲明；含專利授權</td><td class="muted">Gemma 4、Qwen 3.8、Mistral、gpt-oss</td></tr><tr><td class="nm">MIT</td><td class="lv"><span class="on">●</span><span class="on">●</span><span class="on">●</span></td><td class="nw">完全可商用</td><td>保留授權聲明，限制最少</td><td class="muted">DeepSeek、GLM</td></tr><tr><td class="nm">修改版 MIT</td><td class="lv"><span class="on">●</span><span class="on">●</span><span class="off">●</span></td><td class="nw">可商用</td><td>超大規模商用需標示模型名稱</td><td class="muted">Kimi K2</td></tr><tr><td class="nm">社群授權</td><td class="lv"><span class="on">●</span><span class="on">●</span><span class="off">●</span></td><td class="nw">有條件商用</td><td>月活超過 7 億需另談；衍生模型需加前綴；遵守使用政策</td><td class="muted">Llama 4</td></tr><tr><td class="nm">廠商自訂授權</td><td class="lv"><span class="on">●</span><span class="on">●</span><span class="off">●</span></td><td class="nw">依條款而定</td><td>各家條款不同，須逐條確認</td><td class="muted">Nemotron、TAIDE、Kimi K3</td></tr><tr><td class="nm">非商用（CC BY-NC）</td><td class="lv no"><span class="off">●</span><span class="off">●</span><span class="off">●</span></td><td class="nw">不可商用</td><td>僅限研究與個人使用</td><td class="muted">部分研究型模型</td></tr></tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">繼承</span><span>微調後的衍生模型，要同時遵守基底模型的授權</span>
+      <span class="k">會變</span><span>同一家也會換授權：Gemma 1–3 是自訂條款，Gemma 4 改為 Apache 2.0</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l5" role="tabpanel" aria-labelledby="bl5" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>地端模型比的是基礎能力</h2>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>能力</th><th>Benchmark</th><th>測什麼</th></tr></thead>
+      <tbody><tr><td class="cat">知識</td><td class="nm">MMLU-Pro</td><td>14 個學科、10 選 1 的知識題</td></tr><tr><td class="cat">科學推理</td><td class="nm">GPQA Diamond</td><td>研究所程度的生物、化學、物理</td></tr><tr><td class="cat">數學推理</td><td class="nm">AIME、MATH-500</td><td>多步驟的競賽數學題</td></tr><tr><td class="cat">程式</td><td class="nm">LiveCodeBench</td><td>持續更新的程式題，降低題目外洩</td></tr><tr><td class="cat">指令遵循</td><td class="nm">IFEval</td><td>能否精確遵守格式、字數等指令</td></tr><tr><td class="cat">工具呼叫</td><td class="nm">BFCL</td><td>能否正確呼叫函式、帶對參數</td></tr><tr><td class="cat">長上下文</td><td class="nm">RULER</td><td>實際能有效運用的上下文長度</td></tr><tr><td class="cat">繁體中文</td><td class="nm">TMMLU+</td><td>台灣各領域考題的繁中知識</td></tr></tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">對照雲端</span><span>雲端旗艦比 agent 與電腦操作；地端模型卡多比知識、推理、指令遵循</span>
+      <span class="k">怎麼看</span><span>跟同尺寸比；量化後分數會下降，模型卡多為原始精度的成績</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l6" role="tabpanel" aria-labelledby="bl6" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>對話任務：用 Arena 盲測回答風格</h2>
+      <p class="lead">過去的 Chatbot Arena（LMArena），2026 年 1 月更名為 Arena</p>
+    </div>
+    <div class="arena">
+      <div>
+        <h3>運作方式</h3>
+        <ol class="ladder">
+          <li>輸入同一個問題</li>
+          <li>兩個匿名模型各自回答</li>
+          <li>投票選出比較好的回答</li>
+          <li>揭曉模型身分，累積成排行榜</li>
+        </ol>
+        <a class="linkbtn" href="https://arena.ai" target="_blank" rel="noopener" style="margin-top:16px">arena.ai ↗</a>
+      </div>
+      <div>
+        <h3>怎麼用</h3>
+        <ul class="pts">
+          <li>指定兩個候選模型並排比較</li>
+          <li>用自己的業務問題實測，選出喜歡的回答風格</li>
+        </ul>
+        <h3 style="margin-top:20px">要注意</h3>
+        <ul class="pts">
+          <li>排名反映大眾偏好，不等於你的任務表現</li>
+          <li>投票者偏好較長、排版漂亮的回答</li>
+          <li>研究指出投票可能被操弄</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="l7" role="tabpanel" aria-labelledby="bl7" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>近半年釋出的開源大型語言模型</h2>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>時間</th><th>模型</th><th>開發商</th><th>國家</th><th>參數量</th><th>關注要點</th></tr></thead>
+      <tbody><tr><td class="num" style="text-align:left">2026/03</td><td class="nm">Gemma 4</td><td>Google</td><td>美國</td><td>E2B～31B</td><td class="muted">從手機到工作站全尺寸；授權改為 Apache 2.0</td></tr><tr><td class="num" style="text-align:left">2026/03</td><td class="nm">Mistral Small 4</td><td>Mistral AI</td><td>法國</td><td>MoE</td><td class="muted">推理、多模態、agent 程式整合於單一模型</td></tr><tr><td class="num" style="text-align:left">2026/04</td><td class="nm">DeepSeek V4</td><td>DeepSeek</td><td>中國</td><td>Pro 1.6T／Flash 284B</td><td class="muted">以低成本達到前沿等級的 agent 程式能力</td></tr><tr><td class="num" style="text-align:left">2026/04</td><td class="nm">MiniMax M2.7</td><td>MiniMax</td><td>中國</td><td>230B（啟用 10B）</td><td class="muted">專為 agent 與程式設計，Groq 上可調用</td></tr><tr><td class="num" style="text-align:left">2026/06</td><td class="nm">Nemotron 3 Ultra</td><td>NVIDIA</td><td>美國</td><td>550B（啟用 55B）</td><td class="muted">美國最強開放權重之一，整合 NVIDIA 企業部署</td></tr><tr><td class="num" style="text-align:left">2026/06</td><td class="nm">GLM-5.2</td><td>Z.ai（智譜）</td><td>中國</td><td>744B（啟用 40B）</td><td class="muted">長時程規劃與 agent 程式表現突出</td></tr><tr><td class="num" style="text-align:left">2026/07</td><td class="nm">Kimi K3</td><td>Moonshot AI</td><td>中國</td><td>2.8T</td><td class="muted">參數量最大；授權改為依營收分級</td></tr><tr><td class="num" style="text-align:left">2026/08</td><td class="nm">Qwen 3.8</td><td>阿里巴巴</td><td>中國</td><td>27B、2.4T A95B</td><td class="muted">27B 可讀圖片；社群最常用的微調基底</td></tr><tr><td class="num" style="text-align:left">2026/08</td><td class="nm">Muse Glimmer</td><td>Meta</td><td>美國</td><td>30B</td><td class="muted">Llama 4 後首個開放權重，主打消費級顯卡跑 agent</td></tr></tbody>
+    </table></div>
+  </div>
+</section>
+<section class="panel" id="l8" role="tabpanel" aria-labelledby="bl8" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>Groq：用 API 調用開源模型</h2>
+      <p class="lead">價格為每百萬 token，輸入 / 輸出；另有語音轉文字 Whisper 與內容安全模型</p>
+    </div>
+    <div class="tblwrap"><table class="bt">
+      <thead><tr><th>模型 ID</th><th>開發者</th><th class="num">速度 T/s</th><th class="num">價格</th><th>狀態</th><th>適合任務</th></tr></thead>
+      <tbody><tr><td class="nm mono">openai/gpt-oss-120b</td><td>OpenAI</td><td class="num">500</td><td class="num">$0.15 / $0.60</td><td><span class="chip c-local">正式</span></td><td>複雜推理、agent；內建網頁搜尋與程式執行</td></tr><tr><td class="nm mono">openai/gpt-oss-20b</td><td>OpenAI</td><td class="num">1,000</td><td class="num">$0.075 / $0.30</td><td><span class="chip c-local">正式</span></td><td>高速、大量、低成本：分類、抽取、即時問答</td></tr><tr><td class="nm mono">qwen/qwen3.8-27b</td><td>阿里巴巴</td><td class="num">450</td><td class="num">$0.80 / $4.00</td><td><span class="chip c-accent">預覽</span></td><td>唯一可讀圖片的模型；推理強度可調</td></tr><tr><td class="nm mono">minimaxai/minimax-m2.7</td><td>MiniMax</td><td class="num">260</td><td class="num">企業方案</td><td><span class="chip c-accent">預覽</span></td><td>agent 與程式任務；context 約 196K</td></tr><tr><td class="nm mono">llama-3.3-70b-versatile</td><td>Meta</td><td class="num">280</td><td class="num">企業方案</td><td><span class="chip c-local">正式</span></td><td>通用對話與文字處理</td></tr><tr><td class="nm mono">llama-3.1-8b-instant</td><td>Meta</td><td class="num">560</td><td class="num">企業方案</td><td><span class="chip c-local">正式</span></td><td>低延遲的簡單任務</td></tr></tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">API</span><span><span class="formula">https://api.groq.com/openai/v1</span>　OpenAI 相容，改 base URL 就能串接</span>
+      <span class="k">留意</span><span>開源模型也能在雲端跑：用 Groq 時，資料一樣會離開公司</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l9" role="tabpanel" aria-labelledby="bl9" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>產線 SOP 即時問答</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>任務類型：即時問答</span></div>
+        <blockquote>「作業員在產線上用平板查詢製造指示卡與 SOP，希望一問就答。」</blockquote>
+        <dl class="facts"><dt>使用量</dt><dd>全廠每天上千次查詢</dd><dt>要做的</dt><dd>從指示卡找出對應步驟與參數</dd><dt>要求</dt><dd>回應要快、成本要低</dd><dt>使用者</dt><dd>現場作業員</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選 Groq 上的哪一個模型？</h3>
+        <div class="choices" role="radiogroup" aria-label="產線 SOP 即時問答的模型選擇" data-group="gq1"><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq1-0"><span class="dot"></span><span class="t">GPT OSS 120B</span><span class="s">500 T/s・$0.15 / $0.60</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq1-1"><span class="dot"></span><span class="t">GPT OSS 20B</span><span class="s">1,000 T/s・$0.075 / $0.30</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq1-2"><span class="dot"></span><span class="t">Qwen 3.8 27B</span><span class="s">450 T/s・$0.80 / $4.00</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq1-3"><span class="dot"></span><span class="t">MiniMax M2.7</span><span class="s">260 T/s・企業方案</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l10" role="tabpanel" aria-labelledby="bl10" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>客訴不良品 8D 報告</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>任務類型：品質分析</span></div>
+        <blockquote>「客戶退回不良品，請根據照片與檢驗報告，整理可能原因並產出 8D 報告初稿。」</blockquote>
+        <dl class="facts"><dt>輸入</dt><dd>不良品照片、檢驗報告</dd><dt>要做的</dt><dd>判讀影像、歸納可能原因</dd><dt>輸出</dt><dd>8D 報告初稿</dd><dt>使用者</dt><dd>品保工程師</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選 Groq 上的哪一個模型？</h3>
+        <div class="choices" role="radiogroup" aria-label="客訴不良品 8D 報告的模型選擇" data-group="gq2"><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq2-0"><span class="dot"></span><span class="t">GPT OSS 120B</span><span class="s">500 T/s・$0.15 / $0.60</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq2-1"><span class="dot"></span><span class="t">GPT OSS 20B</span><span class="s">1,000 T/s・$0.075 / $0.30</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq2-2"><span class="dot"></span><span class="t">Qwen 3.8 27B</span><span class="s">450 T/s・$0.80 / $4.00</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="gq2-3"><span class="dot"></span><span class="t">MiniMax M2.7</span><span class="s">260 T/s・企業方案</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="l11" role="tabpanel" aria-labelledby="bl11" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">模型｜地端模型</div>
+      <h2>兩個情境，看的是速度與能力邊界</h2>
+    </div>
+    <div class="ans2">
+      <div>
+        <h3>情境一：SOP 即時問答</h3>
+        <dl class="kv">
+          <dt>任務型態</dt><dd>簡單檢索問答，大量、高頻</dd>
+          <dt>建議</dt><dd><b>GPT OSS 20B</b>：最快 1,000 T/s、價格最低</dd>
+          <dt>不選 120B</dt><dd>能力過剩，成本是兩倍</dd>
+          <dt>前提</dt><dd>指示卡內容要用 RAG 提供，模型本身不知道</dd>
+          <dt>延伸</dt><dd>語音提問可搭配 Whisper Large V3 Turbo</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>情境二：8D 報告</h3>
+        <dl class="kv">
+          <dt>任務型態</dt><dd>要看照片，再做推理與撰寫</dd>
+          <dt>建議</dt><dd><b>Qwen 3.8 27B</b>：Groq 上唯一可讀圖片的模型</dd>
+          <dt>若只有文字</dt><dd>改用 <b>GPT OSS 120B</b>，推理較強</dd>
+          <dt>注意</dt><dd>目前為預覽模型，正式上線前要評估穩定性</dd>
+          <dt>資料邊界</dt><dd>客訴照片能上雲嗎？回到混合式架構</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 硬體 ============ -->
+<section class="panel" id="h1" role="tabpanel" aria-labelledby="bh1" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜效能因素</div>
+      <h2>記憶體放得下只是門票，這 8 個因素決定跑得好不好</h2>
+    </div>
+    <div class="fx">
+      <div class="fx-nav" role="tablist" aria-label="效能因素" id="fx-nav"></div>
+      <div class="fx-d" id="fx-d" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="h2" role="tabpanel" aria-labelledby="bh2" hidden>
+  <div class="wrap">
+    <div class="head-row">
+      <div class="head">
+        <div class="eyebrow">硬體｜記憶體試算</div>
+        <h2>依模型、人數與任務，推估需要多少記憶體</h2>
+      </div>
+      <div class="seg" role="group" aria-label="切換檢視">
+        <button aria-pressed="true" id="ev-calc" data-v="calc">互動試算</button>
+        <button aria-pressed="false" id="ev-fml" data-v="fml">推導公式</button>
+      </div>
+    </div>
+    <div class="est" id="est-view">
+      <div class="est-ctl">
+        <div class="ctl-row"><span class="ctl-k">參數量</span><div class="chooser" role="radiogroup" aria-label="參數量" id="e-p">
+          <button role="radio" data-v="8" aria-checked="true">8B</button><button role="radio" data-v="14" aria-checked="false">14B</button><button role="radio" data-v="32" aria-checked="false">32B</button><button role="radio" data-v="70" aria-checked="false">70B</button><button role="radio" data-v="120" aria-checked="false">120B MoE</button></div></div>
+        <div class="ctl-row"><span class="ctl-k">量化</span><div class="chooser" role="radiogroup" aria-label="量化" id="e-q">
+          <button role="radio" data-v="bf16" aria-checked="false">BF16</button><button role="radio" data-v="q8" aria-checked="false">8-bit</button><button role="radio" data-v="q4" aria-checked="true">4-bit</button></div></div>
+        <div class="ctl-row"><span class="ctl-k">同時使用人數</span><div class="chooser" role="radiogroup" aria-label="同時使用人數" id="e-u">
+          <button role="radio" data-v="1" aria-checked="false">1</button><button role="radio" data-v="3" aria-checked="false">3</button><button role="radio" data-v="5" aria-checked="true">5</button><button role="radio" data-v="10" aria-checked="false">10</button><button role="radio" data-v="20" aria-checked="false">20</button><button role="radio" data-v="30" aria-checked="false">30</button><button role="radio" data-v="50" aria-checked="false">50</button><button role="radio" data-v="100" aria-checked="false">100</button></div></div>
+        <div class="ctl-row"><span class="ctl-k">任務類型</span><div class="chooser task" role="radiogroup" aria-label="任務類型" id="e-t">
+          <button role="radio" data-v="chat" aria-checked="true">一般問答</button><button role="radio" data-v="rag" aria-checked="false">RAG 知識庫</button><button role="radio" data-v="sum" aria-checked="false">文件摘要</button><button role="radio" data-v="code" aria-checked="false">程式助手</button><button role="radio" data-v="long" aria-checked="false">長文件分析</button><button role="radio" data-v="agent" aria-checked="false">Agent 多步驟</button></div></div>
+      </div>
+      <div class="res est-res" aria-live="polite">
+        <div class="mh"><span class="mk">需要記憶體</span><span class="mv big" id="e-total"></span></div>
+        <div class="stack" aria-hidden="true"><i class="sw" id="s-w"></i><i class="sk" id="s-k"></i><i class="so" id="s-o"></i></div>
+        <dl class="kv legend">
+          <dt><span class="dotk sw"></span>模型權重</dt><dd id="e-w"></dd>
+          <dt><span class="dotk sk"></span>KV cache</dt><dd id="e-k"></dd>
+          <dt><span class="dotk so"></span>執行開銷</dt><dd id="e-o"></dd>
+          <dt>每人 token</dt><dd id="e-tok"></dd>
+        </dl>
+        <div class="rec"><span class="lab">建議級距</span><span id="e-rec"></span></div>
+      </div>
+    </div>
+    <div class="fml" id="est-fml" hidden>
+      <ol class="fsteps">
+        <li><b>① 模型權重</b><code>參數量 × 每參數 bytes</code><span class="muted">BF16 = 2、8-bit ≈ 1.06、4-bit ≈ 0.56</span></li>
+        <li><b>② KV cache</b><code>每 token KV × (輸入 + 輸出) × 同時人數</code><code>每 token KV = 2 × 層數 × KV heads × head 維度 × 2 bytes</code></li>
+        <li><b>③ 執行開銷</b><code>權重 × 10% + 1.5 GB</code></li>
+        <li><b>④ 建議容量</b><code>(① + ② + ③) × 1.2</code><span class="muted">預留 20% 餘裕，對照硬體級距</span></li>
+      </ol>
+      <div class="fsub">
+        <h3>代入目前選擇</h3>
+        <div class="flines" id="f-lines"></div>
+        <div class="tblwrap"><table class="bt small">
+          <thead><tr><th>模型</th><th class="num">層數</th><th class="num">KV heads</th><th class="num">head 維度</th><th class="num">每 token KV</th></tr></thead>
+          <tbody><tr><td class="nm">8B</td><td class="num">32</td><td class="num">8</td><td class="num">128</td><td class="num hi">128 KB</td></tr><tr><td class="nm">14B</td><td class="num">48</td><td class="num">8</td><td class="num">128</td><td class="num hi">192 KB</td></tr><tr><td class="nm">32B</td><td class="num">64</td><td class="num">8</td><td class="num">128</td><td class="num hi">256 KB</td></tr><tr><td class="nm">70B</td><td class="num">80</td><td class="num">8</td><td class="num">128</td><td class="num hi">320 KB</td></tr><tr><td class="nm">120B MoE</td><td class="num">36</td><td class="num">8</td><td class="num">64</td><td class="num hi">72 KB</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+    <p class="note">教學估算：KV cache 以常見 GQA 架構、FP16 計算；「同時使用」指同一時間送出請求的人數</p>
+  </div>
+</section>
+<section class="panel" id="h3" role="tabpanel" aria-labelledby="bh3" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜級距總覽</div>
+      <h2>四個硬體級距，一張表看懂</h2>
+    </div>
+    <div class="tblwrap"><table class="bt tiertbl">
+      <thead><tr><th></th><th><span class="tn">級距一</span>消費級顯卡</th><th><span class="tn">級距二</span>Mac 統一記憶體</th><th><span class="tn">級距三</span>小型 AI 工作站</th><th><span class="tn">級距四</span>多卡伺服器</th></tr></thead>
+      <tbody><tr><th scope="row">代表設備</th><td>RTX 5090 32GB 工作站</td><td>Mac Studio M5 Max／M5 Ultra</td><td>DGX Spark、AMD AI Max+ 迷你主機</td><td>RTX PRO 6000 96GB × 2～8</td></tr><tr><th scope="row">記憶體</th><td>32 GB 顯示記憶體</td><td>128 GB／最高 512 GB 統一記憶體</td><td>128 GB 統一記憶體</td><td>192～768 GB</td></tr><tr><th scope="row">頻寬（速度）</th><td>約 1.8 TB/s　快</td><td>614 GB/s／1.2 TB/s　中</td><td>約 0.26～0.27 TB/s　慢</td><td>每張 1.6～1.8 TB/s　快</td></tr><tr><th scope="row">4-bit 可跑</th><td>約 32B 以內</td><td>120B MoE／數百 B MoE</td><td>120B MoE</td><td>70B 原始精度、數百 B MoE</td></tr><tr><th scope="row">同時使用</th><td>1～10 人</td><td>1～3 人</td><td>1～3 人</td><td>數十～上百人</td></tr><tr><th scope="row">推估價格</th><td>整機 NT$25～35 萬</td><td>NT$15～18 萬／NT$35～45 萬</td><td>NT$7.5～15 萬</td><td>2 卡 NT$120 萬起；4 卡 NT$230～280 萬</td></tr></tbody>
+    </table></div>
+    <p class="note">價格為 2026 年 9 月行情推估（1 USD ≈ NT$31.7）；記憶體短缺期間顯卡價格波動大，採購前請詢價</p>
+  </div>
+</section>
+<section class="panel" id="h4" role="tabpanel" aria-labelledby="bh4" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜級距比較</div>
+      <h2>各級距的優點、限制與適合情境</h2>
+    </div>
+    <div class="tcards"><div class="tcard"><h3><span class="tn">級距一</span>消費級顯卡</h3><ul class="pts t-local"><li>頻寬高，單人速度最快</li><li>CUDA 生態完整，工具最多</li></ul><ul class="pts neg"><li>32 GB 是硬上限，放不下大模型</li><li>缺貨嚴重，售價約原價 3 倍</li><li>單卡約 575W，散熱與噪音</li></ul><p class="fit"><span class="lab">適合</span>個人或小團隊、32B 以內模型、開發測試</p></div><div class="tcard"><h3><span class="tn">級距二</span>Mac 統一記憶體</h3><ul class="pts t-local"><li>記憶體大，512 GB 可放數百 B 模型</li><li>安靜、省電、免組裝</li></ul><ul class="pts neg"><li>讀取長輸入（prefill）慢</li><li>不支援 CUDA，部分工具無法使用</li></ul><p class="fit"><span class="lab">適合</span>個人研究、大模型試用、主管展示</p></div><div class="tcard"><h3><span class="tn">級距三</span>小型 AI 工作站</h3><ul class="pts t-local"><li>128 GB＋CUDA，價格相對親民</li><li>兩台可串接跑更大模型</li></ul><ul class="pts neg"><li>頻寬低，產生文字速度慢</li><li>多人同時使用吃力</li></ul><p class="fit"><span class="lab">適合</span>部門 PoC、agent 開發、教學環境</p></div><div class="tcard"><h3><span class="tn">級距四</span>多卡伺服器</h3><ul class="pts t-local"><li>支援多人同時使用，吞吐量高</li><li>可跑原始精度大模型</li></ul><ul class="pts neg"><li>價格高，需要機房、電力與維運</li><li>需要 vLLM 等引擎調校</li></ul><p class="fit"><span class="lab">適合</span>全廠正式服務、大量使用者</p></div></div>
+  </div>
+</section>
+<section class="panel" id="h5" role="tabpanel" aria-labelledby="bh5" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜情境一</div>
+      <h2>研發部門的程式助手</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>需求：程式碼不能外流</span></div>
+        <blockquote>「研發部 3 位工程師想在本地跑程式助手，程式碼不能上雲。」</blockquote>
+        <dl class="facts"><dt>模型</dt><dd>32B 程式模型，4-bit 量化</dd><dt>任務</dt><dd>程式助手：輸入約 16K、輸出約 2K token</dd><dt>同時使用</dt><dd>3 人</dd><dt>預算</dt><dd>NT$20 萬以內</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一套硬體？</h3>
+        <div class="choices" role="radiogroup" aria-label="硬體選擇" data-group="hw1"><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw1-0"><span class="dot"></span><span class="t">RTX 5090 工作站</span><span class="s">級距一・32 GB・NT$25～35 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw1-1"><span class="dot"></span><span class="t">Mac Studio M5 Max</span><span class="s">級距二・128 GB・NT$15～18 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw1-2"><span class="dot"></span><span class="t">DGX Spark</span><span class="s">級距三・128 GB・約 NT$15 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw1-3"><span class="dot"></span><span class="t">RTX PRO 6000 × 2 伺服器</span><span class="s">級距四・192 GB・NT$120 萬起</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="h6" role="tabpanel" aria-labelledby="bh6" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜情境二</div>
+      <h2>全廠 SOP 知識庫問答</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>需求：全廠共用</span></div>
+        <blockquote>「全廠 300 人要用 SOP 知識庫問答，尖峰時段約 30 人同時提問。」</blockquote>
+        <dl class="facts"><dt>模型</dt><dd>120B MoE（例如 gpt-oss-120b），4-bit</dd><dt>任務</dt><dd>RAG 問答：輸入約 4K、輸出約 800 token</dd><dt>同時使用</dt><dd>尖峰 30 人</dd><dt>要求</dt><dd>回應不能讓人等太久</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一套硬體？</h3>
+        <div class="choices" role="radiogroup" aria-label="硬體選擇" data-group="hw2"><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw2-0"><span class="dot"></span><span class="t">RTX 5090 工作站</span><span class="s">級距一・32 GB・NT$25～35 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw2-1"><span class="dot"></span><span class="t">Mac Studio M5 Max</span><span class="s">級距二・128 GB・NT$15～18 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw2-2"><span class="dot"></span><span class="t">DGX Spark</span><span class="s">級距三・128 GB・約 NT$15 萬</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="hw2-3"><span class="dot"></span><span class="t">RTX PRO 6000 × 2 伺服器</span><span class="s">級距四・192 GB・NT$120 萬起</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="h7" role="tabpanel" aria-labelledby="bh7" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">硬體｜解析</div>
+      <h2>先算記憶體，再看人數與速度</h2>
+    </div>
+    <div class="ans2">
+      <div>
+        <h3>情境一：研發程式助手</h3>
+        <div class="flines">
+          <span>① 權重 = 32B × 0.56 = <b>17.9 GB</b></span>
+          <span>② 每 token KV = 2 × 64 × 8 × 128 × 2 B = 256 KB</span>
+          <span>　 KV = 256 KB × (16,000 + 2,000) × 3 人 = <b>14.2 GB</b></span>
+          <span>③ 開銷 = 17.9 × 10% + 1.5 = <b>3.3 GB</b></span>
+          <span>④ 合計 35.4 GB × 1.2 = <b>42.5 GB</b></span>
+        </div>
+        <dl class="kv">
+          <dt>排除</dt><dd>RTX 5090 只有 32 GB，放不下</dd>
+          <dt>建議</dt><dd><b>Mac Studio M5 Max</b> 或 <b>DGX Spark</b>，都在預算內</dd>
+          <dt>取捨</dt><dd>Mac 頻寬 614 GB/s 產生較快；Spark 有 CUDA</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>情境二：全廠 SOP 問答</h3>
+        <div class="flines">
+          <span>① 權重 = 120B × 0.56 = <b>67.2 GB</b></span>
+          <span>② 每 token KV = 2 × 36 × 8 × 64 × 2 B = 72 KB</span>
+          <span>　 KV = 72 KB × (4,000 + 800) × 30 人 = <b>10.6 GB</b></span>
+          <span>③ 開銷 = 67.2 × 10% + 1.5 = <b>8.2 GB</b></span>
+          <span>④ 合計 86.0 GB × 1.2 = <b>103.2 GB</b></span>
+        </div>
+        <dl class="kv">
+          <dt>陷阱</dt><dd>128 GB 放得下，但 30 人 × 4,000 = 12 萬 token 同時湧入；DGX Spark 讀取約 1,723 token/秒，最後一位要等約 70 秒</dd>
+          <dt>建議</dt><dd>103.2 ÷ 96 → <b>RTX PRO 6000 × 2</b>，搭配 vLLM</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 推論 ============ -->
+<section class="panel" id="r1" role="tabpanel" aria-labelledby="br1" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜服務總覽</div>
+      <h2>四種硬體，能用哪些推論服務</h2>
+    </div>
+    <div class="tblwrap"><table class="bt svc">
+      <thead><tr><th>推論服務</th><th>沒有 GPU</th><th>NVIDIA GPU</th><th>AMD 顯示卡</th><th>Mac（Apple Silicon）</th></tr></thead>
+      <tbody><tr><td class="nm">vLLM</td><td><span class="st m">◐</span>CPU 版，Linux 為主</td><td><span class="st y">●</span>Linux 最佳；Windows 需 WSL2</td><td><span class="st y">●</span>ROCm，限 Linux</td><td><span class="st m">◐</span>vllm-metal，2026/9 首版</td></tr><tr><td class="nm">Ollama</td><td><span class="st y">●</span>三平台皆可</td><td><span class="st y">●</span>驅動 550 以上</td><td><span class="st m">◐</span>Linux ROCm；Windows 卡種少</td><td><span class="st y">●</span>Metal 加速</td></tr><tr><td class="nm">llama.cpp</td><td><span class="st y">●</span>CPU 最佳化</td><td><span class="st y">●</span>CUDA</td><td><span class="st y">●</span>ROCm 或 Vulkan</td><td><span class="st y">●</span>Metal 加速</td></tr><tr><td class="nm">MLX</td><td><span class="st x">○</span>不支援</td><td><span class="st m">◐</span>Linux CUDA 後端，較新</td><td><span class="st x">○</span>不支援</td><td><span class="st y">●</span>原生，最佳化最好</td></tr><tr><td class="nm">LM Studio</td><td><span class="st y">●</span>需支援 AVX2</td><td><span class="st y">●</span>CUDA</td><td><span class="st y">●</span>Vulkan、ROCm</td><td><span class="st y">●</span>MLX＋GGUF</td></tr></tbody>
+    </table></div>
+    <div class="insight">
+      <span class="k">圖例</span><span><span class="st y">●</span>支援　<span class="st m">◐</span>有限或需額外設定　<span class="st x">○</span>不支援</span>
+      <span class="k">定位</span><span>vLLM 為多人服務而生；Ollama、llama.cpp、LM Studio 適合單人與小團隊；MLX 專為 Apple Silicon</span>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r2" role="tabpanel" aria-labelledby="br2" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜環境分析</div>
+      <h2>選作業系統與硬體，看能用什麼、限制在哪</h2>
+    </div>
+    <div class="env">
+      <div class="env-ctl">
+        <div class="ctl-row"><span class="ctl-k">作業系統</span><div class="chooser" role="radiogroup" aria-label="作業系統" id="env-os">
+          <button role="radio" data-v="win" aria-checked="true">Windows</button><button role="radio" data-v="linux" aria-checked="false">Linux</button><button role="radio" data-v="mac" aria-checked="false">macOS</button></div></div>
+        <div class="ctl-row"><span class="ctl-k">硬體</span><div class="chooser" role="radiogroup" aria-label="硬體" id="env-hw">
+          <button role="radio" data-v="cpu" aria-checked="false">沒有 GPU</button><button role="radio" data-v="nv" aria-checked="true">NVIDIA</button><button role="radio" data-v="amd" aria-checked="false">AMD</button><button role="radio" data-v="apple" aria-checked="false">Mac</button></div></div>
+        <p class="note" id="env-note"></p>
+      </div>
+      <div class="env-out" aria-live="polite">
+        <div><h3>可用服務</h3><div class="svcchips" id="env-svc"></div></div>
+        <div><h3>限制</h3><ul class="pts neg" id="env-lim"></ul></div>
+        <div><h3>效能影響</h3><ul class="pts t-local" id="env-perf"></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r3" role="tabpanel" aria-labelledby="br3" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜效能影響</div>
+      <h2>同一台電腦，部署方式不同，速度差很多</h2>
+    </div>
+    <div class="perf">
+      <div class="res off">
+        <span class="demo-tag">互動試算：模型放不進 GPU 時</span>
+        <div class="ctl-row"><span class="ctl-k">放在 GPU 的比例</span><div class="chooser" role="radiogroup" aria-label="GPU 比例" id="off-f">
+          <button role="radio" data-v="1" aria-checked="true">100%</button><button role="radio" data-v="0.9" aria-checked="false">90%</button><button role="radio" data-v="0.75" aria-checked="false">75%</button><button role="radio" data-v="0.5" aria-checked="false">50%</button><button role="radio" data-v="0" aria-checked="false">0%</button></div></div>
+        <div class="mh"><span class="mk">產生速度</span><span class="mv" id="off-v"></span></div>
+        <div class="mbar"><i id="off-b"></i></div>
+        <span class="ms" id="off-n"></span>
+      </div>
+      <dl class="kv cmpkv">
+        <dt>原生 vs WSL2</dt><dd>Windows 上用 WSL2 跑 vLLM，約多 20～40% 開銷</dd>
+        <dt>CUDA／ROCm vs Vulkan</dt><dd>Vulkan 相容性最廣，但速度通常較低</dd>
+        <dt>MLX vs GGUF</dt><dd>Mac 上同一模型，MLX 格式通常產生較快</dd>
+        <dt>單人 vs 批次引擎</dt><dd>多人同時使用時，vLLM 的總產出可達數倍</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r4" role="tabpanel" aria-labelledby="br4" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜Ollama</div>
+      <h2>Ollama：一行指令，量出自己電腦的速度</h2>
+    </div>
+    <div class="tool">
+      <div class="tool-l">
+        <ol class="ladder">
+          <li>到 ollama.com 下載安裝</li>
+          <li><span>執行 <code class="ic">ollama run 模型 --verbose</code></span></li>
+          <li>輸入同一段提示詞，看統計數字</li>
+          <li><span>用 <code class="ic">ollama ps</code> 確認是否全在 GPU</span></li>
+        </ol>
+        <a class="linkbtn" href="https://ollama.com" target="_blank" rel="noopener">ollama.com ↗</a>
+      </div>
+      <div class="term" aria-label="終端機輸出範例">
+<span class="c">$ ollama run gpt-oss:20b --verbose</span>
+<span>&gt;&gt;&gt; 用三句話說明預防保養</span>
+<span class="d">…（模型回答）…</span>
+<span>load duration:     1.1s</span>
+<span>prompt eval rate:  910 tokens/s  <em>← 讀取速度</em></span>
+<span>eval rate:         48 tokens/s   <em>← 產生速度</em></span>
+<span class="c">$ ollama ps</span>
+<span>NAME         SIZE    PROCESSOR</span>
+<span>gpt-oss:20b  14 GB   100% GPU  <em>← 是否全在 GPU</em></span>
+      </div>
+    </div>
+    <p class="note">數值為示意；PROCESSOR 若顯示 CPU/GPU 各佔一部分，代表模型沒有完全放進顯示記憶體</p>
+  </div>
+</section>
+<section class="panel" id="r5" role="tabpanel" aria-labelledby="br5" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜LM Studio</div>
+      <h2>LM Studio：圖形介面，適合非工程背景的同仁</h2>
+    </div>
+    <div class="tool">
+      <div class="tool-l">
+        <ol class="ladder">
+          <li>到 lmstudio.ai 下載安裝</li>
+          <li>搜尋模型，看是否標示可完全載入 GPU</li>
+          <li>對話後，看回答下方的速度統計</li>
+          <li>調整 GPU Offload、context 長度再比較</li>
+        </ol>
+        <a class="linkbtn" href="https://lmstudio.ai" target="_blank" rel="noopener">lmstudio.ai ↗</a>
+      </div>
+      <div class="tool-r">
+        <h3>要看的數字</h3>
+        <dl class="kv">
+          <dt>tok/sec</dt><dd>產生速度</dd>
+          <dt>首字時間</dt><dd>Time to first token，讀取輸入花多久</dd>
+          <dt>GPU Offload</dt><dd>多少層放在 GPU，越多越快</dd>
+          <dt>本機 API</dt><dd>開發者頁可啟動 OpenAI 相容伺服器（預設 port 1234）</dd>
+        </dl>
+        <div class="insight"><span class="k">實測原則</span><span>同模型、同量化、同提示詞，跑 3 次取平均</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r6" role="tabpanel" aria-labelledby="br6" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜情境一</div>
+      <h2>業務的離線筆電</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>環境：Windows 筆電</span></div>
+        <blockquote>「業務常到客戶現場，網路不穩，想在筆電上離線整理拜訪紀錄。」</blockquote>
+        <dl class="facts"><dt>作業系統</dt><dd>Windows 11</dd><dt>硬體</dt><dd>沒有獨立 GPU，內顯＋16 GB 記憶體</dd><dt>使用者</dt><dd>業務人員，不熟指令列</dd><dt>任務</dt><dd>摘要、整理重點</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一個推論服務？</h3>
+        <div class="choices" role="radiogroup" aria-label="推論服務選擇" data-group="inf1"><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf1-0"><span class="dot"></span><span class="t">vLLM</span><span class="s">多人服務、批次處理</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf1-1"><span class="dot"></span><span class="t">Ollama</span><span class="s">指令列，單人與小團隊</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf1-2"><span class="dot"></span><span class="t">LM Studio</span><span class="s">圖形介面，單人使用</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf1-3"><span class="dot"></span><span class="t">MLX</span><span class="s">Apple Silicon 專用</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r7" role="tabpanel" aria-labelledby="br7" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜情境二</div>
+      <h2>全廠內部 API</h2>
+    </div>
+    <div class="scn">
+      <div class="ticket">
+        <div class="tt"><span>環境：Linux 伺服器</span></div>
+        <blockquote>「IT 要提供全廠共用的內部 AI API，尖峰約 30 人同時使用。」</blockquote>
+        <dl class="facts"><dt>作業系統</dt><dd>Ubuntu Linux</dd><dt>硬體</dt><dd>RTX PRO 6000 × 2</dd><dt>模型</dt><dd>gpt-oss-120b</dd><dt>要求</dt><dd>多人同時使用、OpenAI 相容 API</dd></dl>
+      </div>
+      <div class="side">
+        <h3>你會選哪一個推論服務？</h3>
+        <div class="choices" role="radiogroup" aria-label="推論服務選擇" data-group="inf2"><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf2-0"><span class="dot"></span><span class="t">vLLM</span><span class="s">多人服務、批次處理</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf2-1"><span class="dot"></span><span class="t">Ollama</span><span class="s">指令列，單人與小團隊</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf2-2"><span class="dot"></span><span class="t">LM Studio</span><span class="s">圖形介面，單人使用</span></button><button class="opt" role="radio" aria-checked="false" data-k="m" id="inf2-3"><span class="dot"></span><span class="t">MLX</span><span class="s">Apple Silicon 專用</span></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="panel" id="r8" role="tabpanel" aria-labelledby="br8" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">推論｜解析</div>
+      <h2>先看環境能用什麼，再看使用人數</h2>
+    </div>
+    <div class="ans2">
+      <div>
+        <h3>情境一：業務的離線筆電</h3>
+        <dl class="kv">
+          <dt>建議</dt><dd><b>LM Studio</b>（Ollama 亦可）：圖形介面，業務自己就能操作</dd>
+          <dt>排除</dt><dd>vLLM 沒有 Windows 原生支援；MLX 只能在 Mac 上跑</dd>
+          <dt>模型</dt><dd>4B～8B、4-bit 量化，才跑得動</dd>
+          <dt>預期</dt><dd>純 CPU 約每秒十幾個 token，摘要夠用；內顯可試 Vulkan</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>情境二：全廠內部 API</h3>
+        <dl class="kv">
+          <dt>建議</dt><dd><b>vLLM</b>：連續批次處理，30 人同時使用仍穩定</dd>
+          <dt>設定</dt><dd>兩張卡用 tensor parallel 切分模型</dd>
+          <dt>排除</dt><dd>Ollama、LM Studio 多人時要排隊；MLX 不適用</dd>
+          <dt>串接</dt><dd>提供 OpenAI 相容 API，程式與 Groq 用法相同</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ Takeaways ============ -->
+<section class="panel" id="k1" role="tabpanel" aria-labelledby="bt1" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Takeaways｜企業學員</div>
+      <h2>帶回公司的四個決策原則</h2>
+    </div>
+    <div class="tks"><div class="tk"><span class="tk-t"><span class="n">1</span>架構選型</span><ul class="pts"><li>用「資料敏感度 × 任務複雜度」盤點 use case，多數企業會走向混合式</li><li>先訂資料邊界：哪些欄位可以上雲</li><li>LLM 負責理解與表達，計算交給演算法，決策留給人</li></ul></div><div class="tk"><span class="tk-t"><span class="n">2</span>模型</span><ul class="pts"><li>Benchmark 只用來篩選，最後用自家資料建立評測集</li><li>雲端選「型號 × 推理強度」，用每任務成本估預算</li><li>地端先確認授權能否商用、模型來源是否符合客戶要求</li></ul></div><div class="tk"><span class="tk-t"><span class="n">3</span>硬體</span><ul class="pts"><li>記憶體放得下只是門票，多人使用要看頻寬與算力</li><li>需求 = 權重＋KV cache＋開銷，再留 20% 餘裕</li><li>價格波動大：先用雲端驗證價值，再決定採購</li></ul></div><div class="tk"><span class="tk-t"><span class="n">4</span>推論</span><ul class="pts"><li>試用選 Ollama、LM Studio；全廠服務選 vLLM＋Linux</li><li>統一用 OpenAI 相容 API，保留雲地切換彈性</li><li>Windows、AMD 環境限制多，採購前先確認軟體支援</li></ul></div></div>
+  </div>
+</section>
+<section class="panel" id="k2" role="tabpanel" aria-labelledby="bt2" hidden>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Takeaways｜在學學生</div>
+      <h2>帶得走的四項能力</h2>
+    </div>
+    <div class="tks"><div class="tk"><span class="tk-t"><span class="n">1</span>架構選型</span><ul class="pts"><li>會用「資料 × 任務」矩陣分析問題，說得出選型理由</li><li>知道 LLM 的能力邊界：最佳化、精確計算交給演算法</li><li>畫得出雲地分工的架構圖與資料流向</li></ul></div><div class="tk"><span class="tk-t"><span class="n">2</span>模型</span><ul class="pts"><li>讀得懂 Model Card 與 benchmark，分辨飽和指標與內部測試</li><li>會用 Hugging Face 找模型、看授權、挑量化版本</li><li>用 Groq 串接開源模型，熟悉 OpenAI 相容 API</li></ul></div><div class="tk"><span class="tk-t"><span class="n">3</span>硬體</span><ul class="pts"><li>算得出記憶體需求：參數量、量化、KV cache</li><li>知道頻寬決定產生速度、算力決定讀取速度</li><li>不必先買硬體：筆電跑 4B～8B，或用雲端 API</li></ul></div><div class="tk"><span class="tk-t"><span class="n">4</span>推論</span><ul class="pts"><li>在自己電腦裝 Ollama 或 LM Studio，實測 tokens/秒</li><li>比較不同量化、GPU 比例下的速度並記錄</li><li>進階：在 Linux 上用 vLLM 架一個多人服務</li></ul></div></div>
   </div>
 </section>
 </main>
-</div>
-<div class="toast" id="toast" hidden></div>
+
 <script>
-// 部署後請改成你的 Cloudflare Worker URL，例如：https://llm-model-lab.your-subdomain.workers.dev
-const API_BASE = window.LLM_LAB_API_BASE || "https://YOUR-WORKER.workers.dev";
-const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
-let token = localStorage.getItem('llm_lab_token') || ''; let me = null;
-const tasks = [
- {id:'classify', title:'簡單分類', desc:'判斷客戶留言屬於：詢價 / 客訴 / 售後 / 其他', qs:[
-  '請將下列客戶留言分類為「詢價 / 客訴 / 售後 / 其他」，只回傳分類與一句理由：\n\n「您好，我們公司想採購 80 台設備，請問大量採購是否有專案價格？」',
-  '請將下列客戶留言分類為「詢價 / 客訴 / 售後 / 其他」，只回傳分類與一句理由：\n\n「上週收到的機器開機不到十分鐘就會自動重啟，已經影響現場生產。」',
-  '請將下列客戶留言分類為「詢價 / 客訴 / 售後 / 其他」，只回傳分類與一句理由：\n\n「兩個月前購買的產品需要更換耗材，請問維修中心可以直接處理嗎？」',
-  '請將下列客戶留言分類為「詢價 / 客訴 / 售後 / 其他」，只回傳分類與一句理由：\n\n「我們下週會參加你們的研討會，想確認停車資訊。」',
-  '請將下列客戶留言分類為「詢價 / 客訴 / 售後 / 其他」，只回傳分類與一句理由：\n\n「官網寫三天出貨，但我已等九天仍沒有物流資訊，也沒有人回覆。」'
- ]},
- {id:'summary', title:'摘要', desc:'將約 500 字文章整理成三個重點', qs:[
-  `請將以下內容整理成三個重點，每點不超過 45 字：\n\n一家中型製造公司正在評估導入生成式 AI。過去同仁查詢 SOP、設備異常紀錄與客戶規格，主要仰賴共用資料夾與資深員工經驗，因此新人常花很長時間尋找資料。公司希望先建立內部知識問答，但資訊部門擔心資料權限與錯誤回答，營運單位則期待系統能直接提供答案。顧問建議第一階段不要讓模型直接執行高風險操作，而是先聚焦查詢與摘要，並將回答附上來源。資料面則先清理最常用的 SOP 與 FAQ，建立可追溯的測試集。評估指標除了回答正確率，也要記錄回應時間、每次查詢成本與使用者是否真的節省時間。若第一階段成效穩定，再逐步加入 ERP 查詢與表單填寫等工具能力。`,
-  `請將以下內容整理成三個重點，每點不超過 45 字：\n\n某零售品牌近期發現客服量快速增加，但問題高度重複，包括到貨時間、退換貨規則、會員點數與發票。管理層原本想直接採用最強的模型，希望一次解決所有問題。測試後卻發現，多數問題只需要從既有規則中找到答案，使用高階模型並沒有明顯提升正確率，卻使單次成本增加。團隊因此把問題分級：固定規則交給低成本模型，涉及多張訂單或需要判斷例外時才升級到較強模型；若牽涉退款或敏感個資則交由人工覆核。這個分流設計讓整體平均成本下降，同時維持服務品質，也讓團隊更容易找出真正需要高推理能力的場景。`,
-  `請將以下內容整理成三個重點，每點不超過 45 字：\n\n一家食品公司希望用 AI 協助研發團隊查詢歷史配方。資料分散在試算表、PDF 與個人電腦，欄位名稱也不一致。專案一開始直接把所有檔案放入知識庫，結果回答品質不穩，原因並不是模型不夠強，而是來源資料本身存在重複、缺欄與版本衝突。團隊後來先建立資料清理規則，統一原料名稱、版本與日期，並由領域專家標記哪些資料可以作為正式依據。重新測試後，即使使用較小模型也能得到更一致的答案。這個案例讓公司理解，模型能力只是系統品質的一部分，資料治理與評測方式同樣重要。`,
-  `請將以下內容整理成三個重點，每點不超過 45 字：\n\n某企業導入 AI 會議助理後，最初只觀察逐字稿是否完整，但使用者仍覺得幫助有限。後續團隊改以工作流程來定義成功：會議後五分鐘內產出摘要、決策事項與負責人，並把待辦同步到專案系統。模型需要區分「討論中的想法」與「已確認決策」，若資訊不足則明確標示待確認。團隊也保留人工修改紀錄，持續分析常見錯誤。三個月後，會議紀錄整理時間顯著下降，而真正帶來價值的不是逐字稿本身，而是把資訊轉成可執行的下一步。`,
-  `請將以下內容整理成三個重點，每點不超過 45 字：\n\n一家物流公司每天會收到大量自由文字的配送異常回報。過去主管必須逐筆閱讀，再分派給不同部門。導入語言模型後，系統先抽取訂單號、地點、異常類型與緊急程度，再決定是否需要人工處理。初期團隊只追求分類準確率，後來發現真正重要的是高風險案例不能漏掉，因此重新調整評測方式，對冷鏈中斷、危險品與重大客訴設定更高召回要求。一般低風險案件可以使用快速模型，高風險案件則使用較強模型再次判斷並通知主管。`
- ]},
- {id:'extract', title:'資訊擷取', desc:'從 Email 中取得：公司、聯絡人、需求、日期', qs:[
-  '請從以下 Email 擷取「公司、聯絡人、需求、日期」，用 JSON 回傳。\n\n主旨：詢問企業版導入\n您好，我是星河製造的林怡君。我們預計 11 月 18 日前完成內部知識庫 PoC，希望了解 50 人使用的企業方案與教育訓練費用。謝謝。',
-  '請從以下 Email 擷取「公司、聯絡人、需求、日期」，用 JSON 回傳。\n\n您好，我是宏泰食品研發部陳冠宇，想安排 10/22 下午進行線上會議，討論配方文件的 AI 搜尋與權限控管，若可行也想先申請兩週測試。',
-  '請從以下 Email 擷取「公司、聯絡人、需求、日期」，用 JSON 回傳。\n\n您好，這裡是北辰物流，窗口王小姐。公司希望在 12 月第一週前完成客服分類系統的報價，需求包含每日約 8,000 筆訊息與中文、英文兩種語言。',
-  '請從以下 Email 擷取「公司、聯絡人、需求、日期」，用 JSON 回傳。\n\n我是昇岳精密資訊課李志豪，想請問 10/15 是否方便到廠說明地端 LLM 部署？目前約有 30 位工程人員會使用，資料不可離開公司網路。',
-  '請從以下 Email 擷取「公司、聯絡人、需求、日期」，用 JSON 回傳。\n\n您好，我叫 Sophia，任職於 GreenWay Taiwan。想詢問 2026/11/03 的 AI workshop 是否仍有名額，公司希望派 12 位非技術主管參加。'
- ]},
- {id:'reason', title:'推理', desc:'根據五個條件，判斷最適合的供應商並解釋理由', qs:[
-  `根據以下條件選出最適合供應商，並列出判斷步驟：\n需求：1. 預算上限 45 萬；2. 交期 30 天內；3. 必須提供台灣維保；4. 效能分數至少 85；5. 希望保固至少 2 年。\nA：42 萬 / 28 天 / 台灣維保 / 88 分 / 1 年\nB：46 萬 / 21 天 / 台灣維保 / 92 分 / 3 年\nC：44 萬 / 35 天 / 台灣維保 / 91 分 / 3 年\nD：43 萬 / 29 天 / 無台灣維保 / 90 分 / 3 年`,
-  `根據以下條件選出最適合供應商，並列出判斷步驟：\n需求：1. 每月成本不超過 8 萬；2. SLA 至少 99.9%；3. 支援中文；4. 資料需可存放亞洲區；5. 上線時間小於 14 天。\nA：7.5萬 / 99.9% / 中文 / 亞洲 / 10天\nB：6.8萬 / 99.5% / 中文 / 亞洲 / 7天\nC：8.2萬 / 99.95% / 中文 / 亞洲 / 12天\nD：7.9萬 / 99.9% / 英文 / 亞洲 / 8天`,
-  `根據以下條件選出最適合供應商，並列出判斷步驟：\n需求：1. 單價低於 120；2. 最低訂購量不超過 500；3. 不良率低於 1%；4. 交期 20 天內；5. 可追溯批號。\nA：115 / MOQ300 / 0.8% / 18天 / 可\nB：108 / MOQ800 / 0.5% / 15天 / 可\nC：118 / MOQ400 / 1.2% / 12天 / 可\nD：119 / MOQ450 / 0.7% / 19天 / 可`,
-  `根據以下條件選出最適合供應商，並列出判斷步驟：\n需求：1. 年費 60 萬內；2. 至少 200 帳號；3. SSO；4. API；5. 24x7 支援。\nA：58萬 / 250帳號 / SSO有 / API有 / 8x5\nB：62萬 / 300帳號 / SSO有 / API有 / 24x7\nC：59萬 / 220帳號 / SSO有 / API有 / 24x7\nD：55萬 / 180帳號 / SSO有 / API有 / 24x7`,
-  `根據以下條件選出最適合供應商，並列出判斷步驟：\n需求：1. 碳排係數可追溯；2. 價格低於 35/kg；3. 月供應至少 20 噸；4. 交期 10 天內；5. 需 ISO 14067。\nA：可 / 32 / 25噸 / 9天 / 有\nB：可 / 30 / 18噸 / 7天 / 有\nC：可 / 36 / 30噸 / 8天 / 有\nD：不可 / 31 / 22噸 / 8天 / 有`
- ]},
- {id:'analysis', title:'複雜分析', desc:'分析三份方案的優缺點並給出建議', qs:[
-  `請分析三個 AI 導入方案的優缺點，最後依「三個月內可落地、風險可控、總預算 80 萬」提出建議。\n方案A：一次導入客服、知識庫、報表 Agent；70萬；預估12週；需串接4個系統；效益最大。\n方案B：先做知識庫與客服分類；38萬；6週；不執行任何寫入操作；後續可擴充。\n方案C：只做員工版 Chatbot；20萬；3週；最快，但沒有企業資料串接。`,
-  `請分析三個資料治理方案的優缺點，最後依「品質優先、兩個月內完成第一階段」提出建議。\n方案A：所有歷史資料一次清理；完整但需4個月。\n方案B：先清理最常用20%文件，建立版本與 owner，再逐步擴大；8週。\n方案C：不清理，直接交給模型與 RAG；2週，但來源衝突風險高。`,
-  `請分析三個模型策略的優缺點，最後依「每日2萬次請求、80%為簡單分類、20%為複雜判斷」提出建議。\n方案A：所有請求都用 Astra。\n方案B：所有請求都用 Luna。\n方案C：Luna 先處理，低信心或複雜任務再升級 Sol/Astra。`,
-  `請分析三個部署方案的優缺點，最後依「客戶資料不可直接送出、但公司希望使用高階雲端推理」提出建議。\n方案A：全部雲端。\n方案B：全部地端。\n方案C：地端先去識別與抽取必要資訊，再將最小化內容送雲端推理。`,
-  `請分析三個客服自動化方案的優缺點，最後依「不能讓 AI 自動退款、但希望減少人工閱讀量」提出建議。\n方案A：AI 直接回答並執行退款。\n方案B：AI 只分類與摘要，高風險案件交人工。\n方案C：完全不使用 AI，全部人工處理。`
- ]}
-];
-let taskSelections={}, currentTask=0,currentQ=0;
-function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function makeSelections(){taskSelections={}; tasks.forEach(t=>{const n=3+Math.floor(Math.random()*3);taskSelections[t.id]=shuffle(t.qs).slice(0,n)});currentQ=0;renderTask()}
-function renderTaskList(){ $('#taskList').innerHTML=tasks.map((t,i)=>`<button class="task-btn ${i===currentTask?'active':''}" data-ti="${i}"><b>任務 ${i+1}｜${t.title}</b><small>${t.desc}</small></button>`).join(''); $$('.task-btn').forEach(b=>b.onclick=()=>{currentTask=+b.dataset.ti;currentQ=0;renderTaskList();renderTask()}) }
-function renderTask(){const t=tasks[currentTask], qs=taskSelections[t.id]||[];$('#taskEyebrow').textContent=`任務 ${currentTask+1}`;$('#taskTitle').textContent=t.title;$('#taskDesc').textContent=t.desc;$('#questionNav').innerHTML=qs.map((_,i)=>`<button class="${i===currentQ?'active':''}" data-qi="${i}">題目 ${i+1}</button>`).join(''); $$('#questionNav button').forEach(b=>b.onclick=()=>{currentQ=+b.dataset.qi;renderTask()});$('#promptText').textContent=qs[currentQ]||'';resetResult()}
-function resetResult(){['stLatency','stTtft','stInput','stOutput'].forEach(id=>$('#'+id).textContent='—');if(me)$('#stRemain').textContent=Number(me.remaining_tokens||0).toLocaleString();else $('#stRemain').textContent='—';$('#lastRunMeta').textContent='每次執行都會記錄模型、參數、Input / Output Token、總耗時與 TTFT。';$('#answerBox').textContent='尚未執行。';$('#answerBox').classList.remove('loading')}
-$$('.nav button').forEach(b=>b.onclick=()=>{$$('.nav button').forEach(x=>x.setAttribute('aria-selected','false'));b.setAttribute('aria-selected','true');$$('.panel').forEach(p=>p.classList.remove('active'));$('#'+b.dataset.tab).classList.add('active')});
-const why={classify:['大量、規則明確','優先看速度與成本，不一定需要最大模型。','先用最小可行模型驗證準確率，再升級。'],report:['需要比較與判斷','品質比極致速度重要，通常從中高階模型開始。','先定義評分標準，再比較 Sol 與 Astra 是否真的有品質差。'],vision:['多模態輸入','先確認模型是否支援圖片，再談能力級距。','「模型很強」不代表它能讀你提供的媒體格式。'],agent:['多步驟與工具使用','除了模型能力，還要看 function calling / tools 與可靠性。','真正成本包含模型、工具呼叫與失敗重試。']};
-$('#whyScenario').onchange=e=>{const v=why[e.target.value];$('#whyLabel').textContent=v[0];$('#whyResult').textContent=v[1];$('#whyReason').textContent=v[2]};
-const trade=[
- {name:'GPT-6 Luna',role:'大量、規則明確任務',text:'先用較低成本快速完成；若品質不夠，再升級。',q:45,s:92,c:2,cv:'低'},
- {name:'GPT-6 Sol',role:'需要分析與判斷的工作',text:'在能力、速度與成本間取得較平衡的級距。',q:78,s:65,c:20,cv:'中'},
- {name:'GPT-6 Astra',role:'高難度、多限制任務',text:'把高成本留給真正需要高能力的少數任務。',q:100,s:40,c:100,cv:'高'}];
-let tradeLevel=0;function drawTrade(){const x=trade[tradeLevel];$('#tradeModel').textContent=x.name;$('#tradeRole').textContent=x.role;$('#tradeText').textContent=x.text;$('#qualityBar').style.width=x.q+'%';$('#speedBar').style.width=x.s+'%';$('#costBar').style.width=x.c+'%';$('#qualityVal').textContent=x.q<60?'基礎':x.q<90?'高':'最高';$('#speedVal').textContent=x.s>80?'快':x.s>50?'中':'較慢';$('#costVal').textContent=x.cv;$$('.level-dots button').forEach((b,i)=>b.classList.toggle('active',i===tradeLevel))}
-const complexities={
-  1:{title:'LEVEL 1｜直接執行',case:'把客戶留言分成「詢價／客訴／售後／其他」',why:'單一步驟、規則清楚、幾乎沒有例外或取捨。',model:'Luna'},
-  2:{title:'LEVEL 2｜整理轉換',case:'從 Email 擷取公司、聯絡人、需求與日期',why:'規則清楚、欄位固定，需要少量理解，但不需要複雜取捨。',model:'Luna'},
-  3:{title:'LEVEL 3｜比較判斷',case:'根據價格、交期、維保、效能與保固比較供應商',why:'要整合多項資訊並依條件做選擇，但評估規則仍然明確。',model:'Sol'},
-  4:{title:'LEVEL 4｜多步推理',case:'插入一張急單後，判斷會延誤誰、影響什麼、有哪些替代方案',why:'多個條件互相影響，而且可能出現例外、衝突與取捨。',model:'Sol'},
-  5:{title:'LEVEL 5｜開放策略',case:'在預算、資安、人力與三個月時程限制下規劃企業 AI 導入路線',why:'目標可能衝突、資訊不完整，沒有唯一答案，需要提出假設、權衡風險與策略。',model:'Astra'}
-};
-function drawAdvice(){const n=+$('#complexity').value,c=complexities[n];$('#complexityLabel').textContent=n+' / 5';$('#tradeAdvice').textContent=`Level ${n} 通常先從 ${c.model} 測試；品質不足再升級。`;$('#cxTitle').textContent=c.title;$('#cxCase').textContent=c.case;$('#cxWhy').textContent=c.why;$$('.complexity-card').forEach(el=>el.classList.toggle('active',+el.dataset.cx===n))}
-$$('.level-dots button').forEach(b=>b.onclick=()=>{tradeLevel=+b.dataset.level;drawTrade()});$('#complexity').oninput=drawAdvice;$$('.complexity-card').forEach(c=>c.onclick=()=>{$('#complexity').value=c.dataset.cx;drawAdvice()});drawTrade();drawAdvice();
-function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;setTimeout(()=>t.hidden=true,3500)}
-async function api(path,opts={}){const headers={'Content-Type':'application/json',...(opts.headers||{})};if(token)headers.Authorization='Bearer '+token;const r=await fetch(API_BASE+path,{...opts,headers});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||`HTTP ${r.status}`);return data}
-function updateMe(data){me=data;$('#userName').textContent=`${data.display_name||'—'} · 第 ${data.group_no??'—'} 組`;const remain=Number(data.remaining_tokens??0),quota=Number(data.token_quota??0);$('#budgetTop').textContent=remain.toLocaleString()+' tokens';$('#quotaRemain').textContent=remain.toLocaleString();$('#quotaTotal').textContent=quota.toLocaleString();$('#quotaFill').style.width=(quota?Math.min(100,Math.max(0,(1-remain/quota)*100)):0)+'%';$('#stRemain').textContent=remain.toLocaleString()}
-async function tryResume(){if(!token)return;try{const d=await api('/api/me');updateMe(d);$('#loginOverlay').hidden=true}catch{localStorage.removeItem('llm_lab_token');token=''}}
-$('#loginForm').onsubmit=async e=>{e.preventDefault();$('#loginError').textContent='';const course_code=$('#courseCodeInput').value.trim();const name=$('#nameInput').value.trim();const group_no=$('#groupInput').value.trim();if(!course_code||!name||!group_no)return;try{const d=await api('/api/login',{method:'POST',body:JSON.stringify({course_code,name,group_no})});token=d.token;localStorage.setItem('llm_lab_token',token);updateMe(d.user);$('#loginOverlay').hidden=true}catch(err){$('#loginError').textContent=err.message}}
-$('#logoutBtn').onclick=()=>{token='';me=null;localStorage.removeItem('llm_lab_token');$('#loginOverlay').hidden=false;$('#nameInput').focus()}
-$('#reshuffleBtn').onclick=()=>{makeSelections();toast('已重新抽出本輪題目')};
-$('#maxTokens').oninput=e=>$('#maxTokLabel').textContent=e.target.value;
-$('#modelSelect').onchange=()=>{const isA=$('#modelSelect').value==='astra';const none=$('#reasoningSelect').querySelector('option[value="none"]');none.disabled=isA;if(isA&&$('#reasoningSelect').value==='none')$('#reasoningSelect').value='low';$('#paramHint').textContent=isA?'Astra 最低使用 low reasoning。':'Luna / Sol 可使用 none，適合觀察推理成本差異。'};
-$('#runBtn').onclick=async()=>{if(!token){$('#loginOverlay').hidden=false;return}const prompt=$('#promptText').textContent;if(!prompt)return;const btn=$('#runBtn');btn.disabled=true;$('#answerBox').textContent='模型執行中…';$('#answerBox').classList.add('loading');const started=performance.now();const model=$('#modelSelect').value,reasoning_effort=$('#reasoningSelect').value,max_output_tokens=+$('#maxTokens').value;try{const d=await api('/api/chat',{method:'POST',body:JSON.stringify({model,reasoning_effort,max_output_tokens,input:prompt,task_id:tasks[currentTask].id})});const localMs=performance.now()-started;$('#answerBox').textContent=d.output||'(沒有文字輸出)';$('#answerBox').classList.remove('loading');$('#stLatency').textContent=(d.latency_ms??localMs).toFixed(0)+' ms';$('#stTtft').textContent=d.ttft_ms==null?'—':Number(d.ttft_ms).toFixed(0)+' ms';$('#stInput').textContent=(d.usage?.input_tokens??0).toLocaleString();$('#stOutput').textContent=(d.usage?.output_tokens??0).toLocaleString();$('#lastRunMeta').textContent=`${d.model_label} · reasoning=${d.parameters?.reasoning_effort??reasoning_effort} · max_output=${d.parameters?.max_output_tokens??max_output_tokens} · API cost $${Number(d.cost_usd||0).toFixed(6)}`;updateMe(d.user);toast(`本次使用 ${(Number(d.usage?.input_tokens||0)+Number(d.usage?.output_tokens||0)).toLocaleString()} tokens`)}catch(err){$('#answerBox').textContent='錯誤：'+err.message;$('#answerBox').classList.remove('loading');toast(err.message);try{updateMe(await api('/api/me'))}catch{}}finally{btn.disabled=false}}
-renderTaskList();makeSelections();tryResume();
+(function(){
+  const secBtns=[...document.querySelectorAll('.sec')];
+  const navs=[...document.querySelectorAll('.tabs')];
+  const grps=[...document.querySelectorAll('.grp')];
+  const U=navs.map(n=>{const tabs=[...n.querySelectorAll('.tab')];return {s:+n.dataset.s,nav:n,tabs,panels:tabs.map(t=>document.getElementById(t.getAttribute('aria-controls')))};});
+  const pager=document.getElementById('pager');
+  const lastTab=U.map(()=>0);
+  const lastUnit=secBtns.map((_,k)=>U.findIndex(u=>u.s===k));
+  let ui=0, cur=0;
+  function show(u,i,focusEl){
+    u=Math.max(0,Math.min(U.length-1,u));
+    if(i==null) i=lastTab[u];
+    i=Math.max(0,Math.min(U[u].tabs.length-1,i));
+    ui=u; cur=i; lastTab[u]=i; const sec=U[u].s; lastUnit[sec]=u;
+    secBtns.forEach((b,k)=>{b.setAttribute('aria-selected',k===sec?'true':'false'); b.tabIndex=k===sec?0:-1;});
+    U.forEach((x,k)=>{x.nav.hidden=k!==u;
+      x.tabs.forEach((t,j)=>{const on=k===u&&j===i; t.setAttribute('aria-selected',on?'true':'false'); t.tabIndex=on?0:-1;});
+      x.panels.forEach((p,j)=>{p.hidden=!(k===u&&j===i);});});
+    grps.forEach(g=>{g.hidden=+g.dataset.s!==sec; g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===U[u].nav.id?'true':'false'));});
+    pager.textContent=(i+1)+' / '+U[u].tabs.length;
+    U[u].tabs[i].scrollIntoView({block:'nearest',inline:'nearest'});
+    if(focusEl) U[u].tabs[i].focus();
+    try{history.replaceState(null,'','#'+U[u].panels[i].id);}catch(e){}
+    try{localStorage.setItem('llm-deploy-pos2',u+','+i);}catch(e){}
+  }
+  secBtns.forEach((b,k)=>b.addEventListener('click',()=>show(lastUnit[k])));
+  grps.forEach(g=>g.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>show(U.findIndex(x=>x.nav.id===b.dataset.u)))));
+  U.forEach((x,k)=>x.tabs.forEach((t,j)=>t.addEventListener('click',()=>show(k,j))));
+  function step(d,f){
+    const u=U[ui], n=cur+d;
+    if(n>=0&&n<u.tabs.length) return show(ui,n,f);
+    const nu=ui+d;
+    if(U[nu]&&U[nu].s===u.s) show(nu,d>0?0:U[nu].tabs.length-1,f);
+  }
+  function secStep(d){
+    const sec=U[ui].s+d; if(sec<0||sec>=secBtns.length) return;
+    show(lastUnit[sec]);
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.target.closest('input,textarea')) return;
+    const ae=document.activeElement, onTab=!!(ae&&ae.classList.contains('tab'));
+    if(ae&&ae.classList.contains('sec')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){e.preventDefault(); secStep(e.key==='ArrowRight'?1:-1); secBtns[U[ui].s].focus(); return;}
+    if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault(); step(1,onTab);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault(); step(-1,onTab);}
+    else if(e.key==='ArrowDown'){e.preventDefault(); secStep(1);}
+    else if(e.key==='ArrowUp'){e.preventDefault(); secStep(-1);}
+    else if(/^[1-9]$/.test(e.key)&&+e.key<=U[ui].tabs.length){show(ui,+e.key-1);}
+  });
+  let st=[0,0], found=false;
+  const h=(location.hash||'').slice(1);
+  if(h) U.forEach((x,k)=>x.panels.forEach((p,j)=>{if(p.id===h){st=[k,j];found=true;}}));
+  if(!found){try{const v=(localStorage.getItem('llm-deploy-pos2')||'').split(',').map(Number); if(v.length===2&&U[v[0]]&&U[v[0]].tabs[v[1]]) st=v;}catch(e){}}
+  show(st[0],st[1]);
+
+
+  // memory calculator
+  (function(){
+    const P=[4,8,14,32,70], BYTES={bf16:2,q8:1.06,q4:0.56}, QN={bf16:'BF16',q8:'8-bit',q4:'4-bit'};
+    const BASE={4:55,8:65,14:73,32:82,70:90};
+    let pv=8, qv='bf16';
+    const $=id=>document.getElementById(id);
+    function hw(g){ if(g<=6.5) return '筆電或 8 GB 顯卡'; if(g<=14) return '16 GB 顯卡'; if(g<=22) return '24 GB 顯卡'; if(g<=30) return '32 GB 顯卡';
+      if(g<=44) return '48 GB 專業顯卡'; if(g<=110) return '128 GB 統一記憶體工作站'; return '多卡伺服器'; }
+    function qf(q,p){ if(q==='bf16') return 1; if(q==='q8') return 0.99; return p<=8?0.94:0.97; }
+    function upd(){
+      const w=pv*BYTES[qv], mem=w*1.1, maxMem=70*2*1.1;
+      const tps=Math.round(1000*0.7/w), maxT=Math.round(1000*0.7/(4*0.56));
+      const q=Math.round(BASE[pv]*qf(qv,pv));
+      $('o-mem').textContent='約 '+(mem<10?mem.toFixed(1):Math.round(mem))+' GB';
+      $('b-mem').style.width=Math.max(3,mem/maxMem*100)+'%';
+      $('o-hw').textContent='可跑在：'+hw(mem);
+      $('o-spd').textContent='約 '+tps+' tokens/秒';
+      $('b-spd').style.width=Math.max(3,tps/maxT*100)+'%';
+      $('o-q').textContent=q+' / 100';
+      $('b-q').style.width=q+'%';
+      const loss=qv==='bf16'?'原始精度，作為基準':qv==='q8'?'幾乎無損，與原始精度差異極小':(pv<=8?'小模型對量化較敏感，品質下降較明顯':'品質輕微下降，換來記憶體減少約七成');
+      $('o-qn').textContent=pv+'B・'+QN[qv]+'：'+loss;
+    }
+    function bind(id,set){ const bs=[...$(id).querySelectorAll('button')];
+      bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.setAttribute('aria-checked',x===b?'true':'false')); set(b.dataset.v); upd();})); }
+    bind('pk-p',v=>pv=+v); bind('pk-q',v=>qv=v); upd();
+    const vb=[$('mv-calc'),$('mv-gemma')];
+    vb.forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.v==='gemma';
+      vb.forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+      $('calc').hidden=g; $('calc-note').hidden=g; $('gemma').hidden=!g;}));
+  })();
+
+
+  // hardware memory estimator
+  (function(){
+    const $=id=>document.getElementById(id);
+    const ARCH={8:[32,8,128],14:[48,8,128],32:[64,8,128],70:[80,8,128],120:[36,8,64]};
+    const BY={bf16:2,q8:1.06,q4:0.56};
+    const TASK={chat:[1000,500],rag:[4000,800],sum:[8000,1000],code:[16000,2000],long:[32000,2000],agent:[64000,4000]};
+    const st={p:8,q:'q4',u:5,t:'chat'};
+    const f=x=>x<10?x.toFixed(1):x<100?x.toFixed(1):Math.round(x).toLocaleString();
+    const n=x=>x.toLocaleString();
+    function rec(need,u){
+      if(need<=32) return '級距一：RTX 5090 32 GB 工作站';
+      if(need<=128&&u<=5) return '級距二／三：128 GB 統一記憶體（Mac Studio M5 Max、DGX Spark）';
+      if(need<=512&&u<=5) return '級距二：Mac Studio M5 Ultra 512 GB，或級距四';
+      const k=Math.ceil(need/96); const c=k<=2?2:k<=4?4:k<=8?8:0;
+      return c?('級距四：RTX PRO 6000 96 GB × '+c+' 伺服器'):'級距四以上：資料中心級多節點叢集';
+    }
+    function upd(){
+      const a=ARCH[st.p], kvb=2*a[0]*a[1]*a[2]*2, w=st.p*BY[st.q], io=TASK[st.t], tok=io[0]+io[1];
+      const k=kvb*tok*st.u/1e9, o=w*0.1+1.5, tot=w+k+o, need=tot*1.2;
+      $('e-total').textContent='約 '+f(tot)+' GB';
+      $('s-w').style.width=(w/tot*100)+'%'; $('s-k').style.width=(k/tot*100)+'%'; $('s-o').style.width=(o/tot*100)+'%';
+      $('e-w').textContent=f(w)+' GB'; $('e-k').textContent=f(k)+' GB'; $('e-o').textContent=f(o)+' GB';
+      $('e-tok').textContent='輸入 '+n(io[0])+'＋輸出 '+n(io[1]);
+      $('e-rec').textContent=rec(need,st.u);
+      const pl=st.p===120?'120B':st.p+'B';
+      $('f-lines').innerHTML=[
+        '① 權重 = '+pl+' × '+BY[st.q]+' = <b>'+f(w)+' GB</b>',
+        '② 每 token KV = 2 × '+a[0]+' × '+a[1]+' × '+a[2]+' × 2 B = '+(kvb/1024)+' KB',
+        '　 KV = '+(kvb/1024)+' KB × '+n(tok)+' × '+st.u+' 人 = <b>'+f(k)+' GB</b>',
+        '③ 開銷 = '+f(w)+' × 10% + 1.5 = <b>'+f(o)+' GB</b>',
+        '④ 合計 '+f(tot)+' GB × 1.2 = <b>'+f(need)+' GB</b>'].map(x=>'<span>'+x+'</span>').join('');
+    }
+    [['e-p','p',Number],['e-q','q',String],['e-u','u',Number],['e-t','t',String]].forEach(([id,key,cast])=>{
+      const bs=[...$(id).querySelectorAll('button')];
+      bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.setAttribute('aria-checked',x===b?'true':'false')); st[key]=cast(b.dataset.v); upd();}));
+    });
+    upd();
+    const vb=[$('ev-calc'),$('ev-fml')];
+    vb.forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.v==='fml';
+      vb.forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+      $('est-view').hidden=g; $('est-fml').hidden=!g;}));
+  })();
+
+  // performance factors
+  (function(){
+    const $=id=>document.getElementById(id);
+    const r1=x=>x>=100?Math.round(x).toLocaleString():x>=10?x.toFixed(1):x.toFixed(2);
+    const F=[
+     {t:'記憶體頻寬',d:'每產生一個 token，GPU 都要把整個模型權重讀過一次。頻寬越大，讀得越快，文字產生得越快。',
+      spec:'GPU 規格表的 <b>Memory Bandwidth（GB/s）</b>，由記憶體類型（GDDR7、HBM3e、LPDDR5X）與匯流排寬度決定',
+      imp:'產生速度（tokens/秒）幾乎與頻寬成正比',
+      c:[['bw','頻寬',[[273,'273 GB/s'],[614,'614'],[1200,'1,200'],[1792,'1,792']]],['m','模型 4-bit',[[4.5,'8B'],[17.9,'32B'],[39.2,'70B']]]],
+      s:{bw:614,m:17.9},
+      o:v=>{const t=v.bw*0.7/v.m;return {lab:'單人產生速度',val:'約 '+r1(t)+' tokens/秒',pct:t/(1792*0.7/4.5),note:'273：DGX Spark｜614：M5 Max｜1,200：M5 Ultra｜1,792：RTX 5090'};}},
+     {t:'GPU 算力',d:'讀取輸入（prefill）是大量矩陣運算，靠 GPU 算力。輸入越長、算力越低，第一個字出現前等越久。',
+      spec:'規格表的 <b>Tensor 效能（TFLOPS）</b>；注意標示的是 FP16、FP8 或 FP4，以及 dense 或 sparse',
+      imp:'決定首字等待時間，以及多人同時送出時的排隊時間',
+      c:[['tf','有效算力',[[100,'100 TFLOPS'],[250,'250'],[500,'500'],[1000,'1,000']]],['L','輸入長度',[[1000,'1K'],[4000,'4K'],[16000,'16K'],[64000,'64K']]]],
+      s:{tf:250,L:16000},
+      o:v=>{const t=2*32e9*v.L/(v.tf*1e12*0.4);return {lab:'32B 模型的首字等待',val:'約 '+r1(t)+' 秒',pct:Math.min(1,t/60),note:'計算量 ≈ 2 × 參數量 × 輸入 token；假設算力利用率 40%'};}},
+     {t:'低精度支援',d:'新世代 GPU 能直接用 FP8、FP4 運算。同一張卡可以放更大的模型，速度也更快，品質略降。',
+      spec:'規格表支援的 <b>資料型別</b>與 <b>GPU 架構世代</b>：FP8 需 Ada／Hopper 以後，FP4 需 Blackwell',
+      imp:'記憶體需求減半、速度倍增；舊卡雖能載入量化模型，但無法用硬體加速',
+      c:[['pr','精度',[['16','FP16'],['8','FP8'],['4','FP4']]]],
+      s:{pr:'16'},
+      o:v=>{const b=+v.pr/8,m=70*b,sp={16:1,8:2,4:4}[v.pr],g={16:'所有 GPU',8:'Ada／Hopper 以後',4:'Blackwell'}[v.pr];
+        return {lab:'70B 模型需要',val:m+' GB・速度約 ×'+sp,pct:m/140,note:'需要的架構：'+g+'；速度為頻寬受限時的理論倍數'};}},
+     {t:'多卡互連',d:'模型切到多張卡時，每產生一個 token，卡與卡之間都要交換資料。互連越慢，加卡的效益打越多折扣。',
+      spec:'是否支援 <b>NVLink</b> 與其頻寬；<b>PCIe 世代與通道數</b>（Gen5 x16 約 64 GB/s）。RTX 5090、RTX PRO 6000 沒有 NVLink',
+      imp:'PCIe 互連時，4 卡的速度可能只有單卡的 2 倍左右',
+      c:[['bw','互連',[[32,'PCIe 4.0'],[64,'PCIe 5.0'],[900,'NVLink']]],['n','卡數',[[2,'2'],[4,'4'],[8,'8']]]],
+      s:{bw:64,n:4},
+      o:v=>{const ov=0.35*(v.n-1)*(64/v.bw),sp=v.n/(1+ov);return {lab:v.n+' 張卡的實際加速',val:'約 ×'+sp.toFixed(1)+'（理想 ×'+v.n+'）',pct:sp/8,note:'教學示意：以通訊開銷隨卡數增加、隨互連頻寬減少估算'};}},
+     {t:'CPU、RAM、儲存',d:'模型要先從硬碟讀進記憶體；RAG 的文件切分、向量檢索也在 CPU 與系統記憶體上執行。',
+      spec:'<b>SSD 讀取速度</b>（NVMe Gen4 約 7 GB/s、Gen5 約 14 GB/s）；<b>系統 RAM</b> 建議大於模型大小；CPU 核心數與 PCIe 通道數',
+      imp:'決定開機與切換模型要等多久，以及 RAG 前處理的速度',
+      c:[['sp','儲存',[[0.2,'傳統硬碟'],[0.55,'SATA SSD'],[7,'NVMe Gen4'],[14,'NVMe Gen5']]],['m','模型大小',[[17.9,'18 GB'],[67.2,'67 GB'],[140,'140 GB']]]],
+      s:{sp:7,m:67.2},
+      o:v=>{const t=v.m/v.sp;return {lab:'載入模型時間',val:t>=60?'約 '+r1(t/60)+' 分鐘':'約 '+r1(t)+' 秒',pct:Math.min(1,t/700),note:'以循序讀取速度估算，未含初始化時間'};}},
+     {t:'散熱與電源',d:'高階 GPU 功耗很高，散熱不足會自動降頻，效能直接下滑；電源與機房容量也要一起規劃。',
+      spec:'GPU 的 <b>TDP／TGP 瓦數</b>、電源供應器瓦數與認證、機殼風道或機房冷卻、插座迴路容量',
+      imp:'溫度過高就降頻；多卡伺服器需要機房等級的電力與冷卻',
+      c:[['w','GPU',[[575,'RTX 5090'],[600,'RTX PRO 6000']]],['n','卡數',[[1,'1'],[2,'2'],[4,'4'],[8,'8']]]],
+      s:{w:575,n:2},
+      o:v=>{const kw=(v.w*v.n+400)/1000,psu=kw*1.3,bill=kw*12*30*4;return {lab:'整機功耗',val:'約 '+kw.toFixed(1)+' kW',pct:kw/5.2,note:'建議電源 '+psu.toFixed(1)+' kW；每月電費約 NT$'+Math.round(bill).toLocaleString()+'（每天滿載 12 小時、每度 NT$4）'};}},
+     {t:'軟體生態',d:'硬體再強，沒有對應的推論引擎也用不起來。新模型通常最先支援 NVIDIA CUDA。',
+      spec:'平台的軟體堆疊：<b>NVIDIA CUDA</b>、<b>AMD ROCm</b>、<b>Apple Metal／MLX</b>，以及推論引擎的相容清單',
+      imp:'決定能用哪些推論引擎、新模型多快能跑起來',
+      c:[['pf','平台',[['nv','NVIDIA'],['amd','AMD'],['mac','Apple']]]],
+      s:{pf:'nv'},
+      o:v=>{const M={vLLM:{nv:'y',amd:'y',mac:'m'},'llama.cpp／Ollama':{nv:'y',amd:'y',mac:'y'},'TensorRT-LLM':{nv:'y',amd:'x',mac:'x'},SGLang:{nv:'y',amd:'y',mac:'x'},'MLX-LM':{nv:'x',amd:'x',mac:'y'}};
+        const L={y:'支援',m:'有限',x:'不支援'};
+        return {html:'<div class="eco">'+Object.keys(M).map(k=>'<span>'+k+'</span><span class="'+M[k][v.pf]+'">'+L[M[k][v.pf]]+'</span>').join('')+'</div>'};}},
+     {t:'推論引擎',d:'同一台硬體，引擎決定能不能把多人的請求合併處理。支援連續批次處理的引擎，多人使用時總產出高很多。',
+      spec:'是否支援 <b>連續批次處理</b>（continuous batching）、PagedAttention，以及支援的量化格式（GGUF、AWQ、FP8）',
+      imp:'單人差不多；多人同時使用時，每人速度可差好幾倍',
+      c:[['e','引擎',[['ol','Ollama'],['vl','vLLM']]],['u','同時人數',[[1,'1'],[5,'5'],[10,'10'],[30,'30']]]],
+      s:{e:'vl',u:10},
+      o:v=>{const base=60,tot=v.e==='ol'?base*Math.pow(Math.min(v.u,4),0.6):Math.min(1500,base*Math.pow(v.u,0.85)),per=tot/v.u;
+        return {lab:'每人產生速度',val:'約 '+r1(per)+' tokens/秒',pct:per/base,note:'總產出約 '+Math.round(tot).toLocaleString()+' tokens/秒；教學示意，以 32B 模型單人 60 tokens/秒為基準'};}}
+    ];
+    const nav=$('fx-nav'), d=$('fx-d');
+    let cur=0; const state=F.map(x=>Object.assign({},x.s));
+    nav.innerHTML=F.map((x,i)=>'<button role="tab" aria-selected="'+(i===0)+'" data-i="'+i+'" id="fx-b'+i+'"><span class="n">'+(i+1)+'</span>'+x.t+'</button>').join('');
+    function out(){const x=F[cur],r=x.o(state[cur]);const box=d.querySelector('.fx-out');
+      box.innerHTML=r.html?('<span class="lab">工具支援度</span>'+r.html):
+        ('<span class="lab">'+r.lab+'</span><span class="mv">'+r.val+'</span><div class="mbar"><i style="width:'+Math.max(3,Math.min(100,r.pct*100))+'%"></i></div><span class="ms">'+r.note+'</span>');}
+    function render(){const x=F[cur];
+      d.innerHTML='<h3>'+(cur+1)+'　'+x.t+'</h3><p>'+x.d+'</p><dl class="kv"><dt>看哪個規格</dt><dd>'+x.spec+'</dd><dt>一般影響</dt><dd>'+x.imp+'</dd></dl>'+
+        '<div class="fx-demo"><div class="fx-ctl"><span class="demo-tag">互動試算</span>'+x.c.map(c=>'<div class="ctl-row"><span class="ctl-k">'+c[1]+'</span><div class="chooser" role="radiogroup" aria-label="'+c[1]+'" data-k="'+c[0]+'">'+
+        c[2].map(o=>'<button role="radio" data-v="'+o[0]+'" aria-checked="'+(String(state[cur][c[0]])===String(o[0]))+'">'+o[1]+'</button>').join('')+'</div></div>').join('')+'</div><div class="fx-out"></div></div>';
+      d.querySelectorAll('.fx-ctl .chooser').forEach(g=>{const bs=[...g.querySelectorAll('button')];
+        bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(z=>z.setAttribute('aria-checked',z===b?'true':'false'));
+          const v=b.dataset.v; state[cur][g.dataset.k]=isNaN(+v)?v:(typeof F[cur].s[g.dataset.k]==='string'?v:+v); out();}));});
+      out();}
+    nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{cur=+b.dataset.i;nav.querySelectorAll('button').forEach(z=>z.setAttribute('aria-selected',z===b?'true':'false'));render();}));
+    render();
+  })();
+
+
+  // inference env analyzer
+  (function(){
+    const $=id=>document.getElementById(id);
+    const ENV={"win-cpu": {"svc": [["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["vLLM", "x"], ["MLX", "x"]], "lim": ["只能跑小模型，約 8B 以下、4-bit", "CPU 需支援 AVX2，速度受記憶體頻寬限制", "vLLM 沒有 Windows 原生支援"], "perf": ["產生速度約為 GPU 的 1/5～1/10", "內顯可試 Vulkan 加速"]}, "linux-cpu": {"svc": [["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["vLLM", "m"], ["MLX", "x"]], "lim": ["只能跑小模型，速度受記憶體頻寬限制", "vLLM 有 CPU 版，適合測試、不適合正式服務"], "perf": ["多通道記憶體的伺服器 CPU 比筆電快", "仍遠低於 GPU，多人使用吃力"]}, "win-nv": {"svc": [["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["vLLM", "m"], ["MLX", "x"]], "lim": ["vLLM 需透過 WSL2 或 Docker", "Ollama 需驅動 550 以上", "模型大小受顯示記憶體限制"], "perf": ["WSL2 跑 vLLM 約多 20～40% 開銷", "超出顯示記憶體會卸載到 CPU，速度大降"]}, "linux-nv": {"svc": [["vLLM", "y"], ["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["MLX", "m"]], "lim": ["驅動與 CUDA 版本要對上", "MLX 的 CUDA 後端仍較新"], "perf": ["支援最完整、效能最好", "vLLM 批次處理可服務多人"]}, "win-amd": {"svc": [["llama.cpp", "y"], ["LM Studio", "y"], ["Ollama", "m"], ["vLLM", "x"], ["MLX", "x"]], "lim": ["Windows 上 ROCm 支援的卡種少，Ollama 以 RX 7000 系列為主", "其他卡需改用 Vulkan", "許多工具以 CUDA 優先"], "perf": ["Vulkan 相容性廣，但速度通常較低", "除錯與設定成本較高"]}, "linux-amd": {"svc": [["vLLM", "y"], ["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["MLX", "x"]], "lim": ["支援的顯示卡有清單，舊卡需手動覆寫設定", "vLLM 以 Instinct 與新款 Radeon 為主"], "perf": ["環境調好後接近同級 NVIDIA", "驅動版本變動時需重新驗證"]}, "mac-apple": {"svc": [["MLX", "y"], ["Ollama", "y"], ["llama.cpp", "y"], ["LM Studio", "y"], ["vLLM", "m"]], "lim": ["需 Apple Silicon；LM Studio 不支援 Intel Mac", "沒有 CUDA，部分工具無法使用", "vllm-metal 需 macOS 15，2026/9 才推出首個正式版"], "perf": ["MLX 格式通常比 GGUF 產生較快", "讀取長輸入較慢；多人使用可試 vllm-metal"]}};
+    const LAB={y:'支援',m:'有限',x:'不可用'};
+    let os='win', hw='nv';
+    const osB=[...$('env-os').querySelectorAll('button')], hwB=[...$('env-hw').querySelectorAll('button')];
+    function sync(){
+      if(os==='mac') hw='apple'; else if(hw==='apple') hw='nv';
+      osB.forEach(b=>b.setAttribute('aria-checked',b.dataset.v===os?'true':'false'));
+      hwB.forEach(b=>{b.setAttribute('aria-checked',b.dataset.v===hw?'true':'false'); b.disabled=(os==='mac')!==(b.dataset.v==='apple');});
+      const d=ENV[os+'-'+hw];
+      $('env-svc').innerHTML=d.svc.map(x=>'<span class="svcchip '+x[1]+'">'+x[0]+'<small>'+LAB[x[1]]+'</small></span>').join('');
+      $('env-lim').innerHTML=d.lim.map(x=>'<li>'+x+'</li>').join('');
+      $('env-perf').innerHTML=d.perf.map(x=>'<li>'+x+'</li>').join('');
+      $('env-note').textContent=os==='mac'?'macOS 只對應 Mac 硬體':'Mac 硬體只討論 macOS';
+    }
+    osB.forEach(b=>b.addEventListener('click',()=>{os=b.dataset.v; if(os!=='mac'&&hw==='apple') hw='nv'; sync();}));
+    hwB.forEach(b=>b.addEventListener('click',()=>{if(b.disabled) return; hw=b.dataset.v; sync();}));
+    sync();
+    // offload demo
+    const G=60,C=4; const fb=[...$('off-f').querySelectorAll('button')];
+    function off(f){const t=1/(f/G+(1-f)/C);
+      $('off-v').textContent='約 '+(t>=10?Math.round(t):t.toFixed(1))+' tokens/秒';
+      $('off-b').style.width=Math.max(3,t/G*100)+'%';
+      $('off-n').textContent=f===1?'全部在 GPU：以 32B 模型 60 tokens/秒為基準（示意）':'只要一部分層放在 CPU，就會被最慢的部分拖住';}
+    fb.forEach(b=>b.addEventListener('click',()=>{fb.forEach(x=>x.setAttribute('aria-checked',x===b?'true':'false')); off(+b.dataset.v);}));
+    off(1);
+  })();
+
+  // scenario choice -> tab 3
+  const NAMES={local:'全部地端',cloud:'全部雲端',hybrid:'混合式'};
+  const C={local:'c-local',cloud:'c-cloud'};
+  const DATA={
+    local:{
+      title:'這個架構會遇到三個問題',
+      flow:[['local','地端 LLM','讀取 ERP、MES 資料'],['local','地端 LLM','評估優先級與插單影響'],['local','地端最佳化模型','計算排程'],['local','地端 LLM','整理評估清單']],
+      items:[
+        ['能力邊界','地端小模型撐不起複雜推理','插單影響要跨訂單、製程、物料一起判斷，超出中小模型能力','評估清單漏掉下游製程的連帶延誤'],
+        ['硬體門檻','想跑大模型，硬體投資暴增','模型越大越需要高階 GPU，多方案同時評估時回應變慢','業務等不到即時答覆，只好回頭用電話問生管'],
+        ['維運負擔','模型與系統都要自己顧','更新、監控、權限、資安全靠內部人力，中小廠常缺 AI 維運','模型停在導入當天的版本，沒人敢升級']
+      ]},
+    cloud:{
+      title:'這個架構會遇到三個問題',
+      flow:[[null,null,'ERP、MES 資料全數上傳'],['cloud','雲端 LLM','評估優先級與插單影響'],['cloud','雲端最佳化模型','計算排程'],[null,null,'排程回傳工廠']],
+      items:[
+        ['資料邊界','機敏資料全部上雲','客戶名單、訂單數量、產能狀況，全部離開公司','違反客戶保密協議，稽核時無法交代'],
+        ['營運韌性','斷網就停擺','排程的每一步都依賴雲端，網路或供應商出狀況就全部中斷','網路中斷時產線無法重排，只能停等'],
+        ['成本控管','用量越大，帳單越難預估','每次插單都要帶完整訂單與排程資料上雲，token 用量大','插單頻繁的月份，月底帳單超出預算']
+      ]},
+    hybrid:{
+      title:'要特別注意這六個面向',
+      flow:[['local','地端','讀取資料、計算優先級，代碼化上傳'],['cloud','雲端 LLM','評估插單影響'],['local','地端最佳化模型','計算排程'],['cloud','雲端 LLM','統整各排程結果的影響範圍']],
+      items:[
+        ['資料邊界','哪些欄位可以上雲','客戶與訂單一律以代碼上雲，去識別化規則要先訂好'],
+        ['分工與路由','任務走哪一邊，誰決定','明訂哪些任務留在地端、哪些交給雲端，不靠臨場判斷'],
+        ['斷網降級','雲端連不上時怎麼辦','地端最佳化模型要能獨立運作，至少能用上一版參數排程'],
+        ['模型維護','最佳化模型會過時','機台、產品組合改變時要重新訓練，並加上可行性檢查'],
+        ['系統整合','兩套系統要一起顧','ERP、MES 串接與回寫，雲地兩端的監控與版本管理'],
+        ['人機決策','AI 建議，人來拍板','生管確認後才執行，調整紀錄回饋給模型持續改善']
+      ]}
+  };
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let choice=null;
+  function render(k){
+    const d=DATA[k], isH=k==='hybrid';
+    document.getElementById('t3wrap').dataset.k=k;
+    document.getElementById('t3title').innerHTML='選擇<span class="pick">'+NAMES[k]+'</span>：'+d.title;
+    document.getElementById('v1flow').innerHTML=d.flow.map((f,i)=>
+      (i?'<span class="ar" aria-hidden="true">→</span>':'')+
+      '<div class="st">'+(f[0]?'<span class="chip '+C[f[0]]+'">'+esc(f[1])+'</span>':'')+esc(f[2])+'</div>').join('');
+    const box=document.getElementById('probs');
+    box.classList.toggle('watch',isH);
+    box.innerHTML=d.items.map((p,i)=> isH
+      ? '<div class="prob"><span class="pn">注意 '+(i+1)+'｜'+esc(p[0])+'</span><h3>'+esc(p[1])+'</h3><p class="muted">'+esc(p[2])+'</p></div>'
+      : '<div class="prob"><span class="pn">問題 '+(i+1)+'｜'+esc(p[0])+'</span><h3>'+esc(p[1])+'</h3>'+
+        '<div class="row"><span class="lab">為什麼</span><span class="muted">'+esc(p[2])+'</span></div>'+
+        '<div class="row eg"><span class="lab">現場會發生</span><span>'+esc(p[3])+'</span></div></div>').join('');
+    document.querySelectorAll('#t3wrap .seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false'));
+  }
+  function choose(k){
+    choice=k;
+    document.querySelectorAll('#t2 .opt').forEach(o=>{o.setAttribute('aria-checked',o.dataset.k===k?'true':'false');});
+    render(k);
+  }
+  document.querySelectorAll('#t2 .opt').forEach(o=>o.addEventListener('click',()=>choose(o.dataset.k)));
+  document.querySelectorAll('[data-group]').forEach(g=>{const os=[...g.querySelectorAll('.opt')];os.forEach(o=>o.addEventListener('click',()=>os.forEach(x=>x.setAttribute('aria-checked',x===o?'true':'false'))));});
+  document.querySelectorAll('#t3wrap .seg button').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.k)));
+  render('hybrid');
+})();
 </script>
+
 </body>
 </html>
